@@ -22,9 +22,7 @@ class AdminDataProvider implements DataProvider {
       filter,
     });
 
-    // Use CMS endpoints for pages resource
-    const endpoint = resource === 'pages' ? 'cms/pages' : `admin/${resource}`;
-    const url = `${this.baseUrl}/api/${endpoint}?${query}`;
+    const url = `${this.baseUrl}/api/admin/${resource}?${query}`;
     
     try {
       const response = await httpClient.get<ApiResponse<any[]>>(url);
@@ -39,8 +37,7 @@ class AdminDataProvider implements DataProvider {
   }
 
   async getOne(resource: string, params: GetOneParams) {
-    const endpoint = resource === 'pages' ? 'cms/pages' : `admin/${resource}`;
-    const url = `${this.baseUrl}/api/${endpoint}/${params.id}`;
+    const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
     
     try {
       const response = await httpClient.get<ApiResponse<any>>(url);
@@ -88,8 +85,7 @@ class AdminDataProvider implements DataProvider {
   }
 
   async create(resource: string, params: CreateParams) {
-    const endpoint = resource === 'pages' ? 'cms/pages' : `admin/${resource}`;
-    const url = `${this.baseUrl}/api/${endpoint}`;
+    const url = `${this.baseUrl}/api/admin/${resource}`;
     
     try {
       const response = await httpClient.post<ApiResponse<any>>(url, params.data);
@@ -100,8 +96,7 @@ class AdminDataProvider implements DataProvider {
   }
 
   async update(resource: string, params: UpdateParams) {
-    const endpoint = resource === 'pages' ? 'cms/pages' : `admin/${resource}`;
-    const url = `${this.baseUrl}/api/${endpoint}/${params.id}`;
+    const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
     
     try {
       const response = await httpClient.put<ApiResponse<any>>(url, params.data);
@@ -125,8 +120,7 @@ class AdminDataProvider implements DataProvider {
   }
 
   async delete(resource: string, params: DeleteParams) {
-    const endpoint = resource === 'pages' ? 'cms/pages' : `admin/${resource}`;
-    const url = `${this.baseUrl}/api/${endpoint}/${params.id}`;
+    const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
     
     try {
       const response = await httpClient.delete<ApiResponse<any>>(url);
@@ -148,6 +142,7 @@ class AdminDataProvider implements DataProvider {
       throw new Error(`Failed to delete multiple ${resource}: ${error}`);
     }
   }
+
 
   private buildQuery(params: {
     pagination: PaginationParams;

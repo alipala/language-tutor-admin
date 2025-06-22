@@ -5,20 +5,18 @@ import {
   School, 
   BarChart, 
   EmojiEvents, 
-  Assessment,
-  Article
+  Assessment
 } from "@mui/icons-material";
 import { Layout } from "./Layout";
 import { authProvider } from "./providers/authProvider";
 import { dataProvider } from "./providers/dataProvider";
 import { Dashboard } from "./components/Dashboard";
-import { UserList, UserShow, UserEdit } from "./resources/users";
+import { UserList, UserShow, UserEdit, UserCreate } from "./resources/users";
 import { ConversationList, ConversationShow } from "./resources/conversations";
 import { UserStatsList } from "./resources/user-stats";
 import { BadgesList } from "./resources/badges";
 import { AssessmentHistoryList } from "./resources/assessment-history";
 import { LearningPlansList } from "./resources/learning-plans";
-import { PagesList, PagesEdit, PagesCreate } from "./resources/pages";
 
 export const App = () => (
   <Admin
@@ -33,6 +31,7 @@ export const App = () => (
       list={UserList}
       show={UserShow}
       edit={UserEdit}
+      create={UserCreate}
       icon={People}
       options={{ label: "Users" }}
     />
@@ -66,14 +65,6 @@ export const App = () => (
       list={LearningPlansList}
       icon={School}
       options={{ label: "Learning Plans" }}
-    />
-    <Resource
-      name="pages"
-      list={PagesList}
-      edit={PagesEdit}
-      create={PagesCreate}
-      icon={Article}
-      options={{ label: "Content Management" }}
     />
   </Admin>
 );

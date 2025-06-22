@@ -6,8 +6,6 @@ import {
   DateField,
   NumberField,
   ReferenceField,
-  ArrayField,
-  Datagrid,
   FunctionField,
   useRecordContext
 } from 'react-admin';
@@ -17,12 +15,10 @@ import {
   Typography, 
   Chip, 
   Box, 
-  Grid,
   Paper,
   List,
   ListItem,
   ListItemText,
-  Divider
 } from '@mui/material';
 
 const ConversationMessages = () => {
@@ -71,10 +67,10 @@ const EnhancedAnalysis = () => {
   const aiInsights = analysis.ai_insights || {};
   
   return (
-    <Grid container spacing={2}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       {/* Quality Metrics */}
-      <Grid item xs={12} md={6}>
-        <Card>
+      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+        <Card sx={{ flex: 1, minWidth: 300 }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
               Conversation Quality
@@ -83,7 +79,7 @@ const EnhancedAnalysis = () => {
               <Chip 
                 label={`Overall Score: ${Math.round(qualityScore)}%`}
                 color={qualityScore >= 80 ? 'success' : qualityScore >= 60 ? 'warning' : 'error'}
-                size="large"
+                size="medium"
               />
             </Box>
             <Typography variant="body2" color="textSecondary">
@@ -97,11 +93,9 @@ const EnhancedAnalysis = () => {
             </Typography>
           </CardContent>
         </Card>
-      </Grid>
-      
-      {/* Learning Progress */}
-      <Grid item xs={12} md={6}>
-        <Card>
+        
+        {/* Learning Progress */}
+        <Card sx={{ flex: 1, minWidth: 300 }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
               Learning Progress
@@ -117,74 +111,72 @@ const EnhancedAnalysis = () => {
             </Typography>
           </CardContent>
         </Card>
-      </Grid>
+      </Box>
       
       {/* AI Insights */}
-      <Grid item xs={12}>
-        <Card>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              AI Insights (Confidence: {aiInsights.confidence_level || 0}%)
-            </Typography>
-            
-            {aiInsights.breakthrough_moments && aiInsights.breakthrough_moments.length > 0 && (
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="subtitle2" color="success.main">
-                  ✅ Breakthrough Moments:
-                </Typography>
-                <List dense>
-                  {aiInsights.breakthrough_moments.map((moment: string, index: number) => (
-                    <ListItem key={index}>
-                      <ListItemText primary={moment} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
-            )}
-            
-            {aiInsights.struggle_points && aiInsights.struggle_points.length > 0 && (
-              <Box sx={{ mb: 2 }}>
-                <Typography variant="subtitle2" color="warning.main">
-                  ⚠️ Areas for Improvement:
-                </Typography>
-                <List dense>
-                  {aiInsights.struggle_points.map((point: string, index: number) => (
-                    <ListItem key={index}>
-                      <ListItemText primary={point} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
-            )}
-            
-            {aiInsights.next_session_focus && aiInsights.next_session_focus.length > 0 && (
-              <Box>
-                <Typography variant="subtitle2" color="info.main">
-                  🎯 Next Session Focus:
-                </Typography>
-                <List dense>
-                  {aiInsights.next_session_focus.map((focus: string, index: number) => (
-                    <ListItem key={index}>
-                      <ListItemText primary={focus} />
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
-            )}
-          </CardContent>
-        </Card>
-      </Grid>
-    </Grid>
+      <Card>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            AI Insights (Confidence: {aiInsights.confidence_level || 0}%)
+          </Typography>
+          
+          {aiInsights.breakthrough_moments && aiInsights.breakthrough_moments.length > 0 && (
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="subtitle2" color="success.main">
+                ✅ Breakthrough Moments:
+              </Typography>
+              <List dense>
+                {aiInsights.breakthrough_moments.map((moment: string, index: number) => (
+                  <ListItem key={index}>
+                    <ListItemText primary={moment} />
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+          )}
+          
+          {aiInsights.struggle_points && aiInsights.struggle_points.length > 0 && (
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="subtitle2" color="warning.main">
+                ⚠️ Areas for Improvement:
+              </Typography>
+              <List dense>
+                {aiInsights.struggle_points.map((point: string, index: number) => (
+                  <ListItem key={index}>
+                    <ListItemText primary={point} />
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+          )}
+          
+          {aiInsights.next_session_focus && aiInsights.next_session_focus.length > 0 && (
+            <Box>
+              <Typography variant="subtitle2" color="info.main">
+                🎯 Next Session Focus:
+              </Typography>
+              <List dense>
+                {aiInsights.next_session_focus.map((focus: string, index: number) => (
+                  <ListItem key={index}>
+                    <ListItemText primary={focus} />
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 
 export const ConversationShow = () => (
   <Show title="Conversation Details">
     <SimpleShowLayout>
-      <Grid container spacing={3}>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
         {/* Basic Info */}
-        <Grid item xs={12} md={6}>
-          <Card>
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+          <Card sx={{ flex: 1, minWidth: 300 }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Session Information
@@ -206,33 +198,29 @@ export const ConversationShow = () => (
               <DateField source="updated_at" label="Completed" showTime />
             </CardContent>
           </Card>
-        </Grid>
-        
-        {/* Summary */}
-        <Grid item xs={12} md={6}>
-          <Card>
+          
+          {/* Summary */}
+          <Card sx={{ flex: 1, minWidth: 300 }}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Session Summary
               </Typography>
-              <TextField source="summary" label="AI Summary" multiline />
+              <TextField source="summary" label="AI Summary" />
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
         
         {/* Messages */}
-        <Grid item xs={12}>
-          <FunctionField render={() => <ConversationMessages />} />
-        </Grid>
+        <FunctionField render={() => <ConversationMessages />} />
         
         {/* Enhanced Analysis */}
-        <Grid item xs={12}>
+        <Box>
           <Typography variant="h5" gutterBottom sx={{ mt: 2 }}>
             Enhanced Analysis
           </Typography>
           <FunctionField render={() => <EnhancedAnalysis />} />
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </SimpleShowLayout>
   </Show>
 );
