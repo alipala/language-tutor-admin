@@ -1,5 +1,5 @@
 import { DataProvider, GetListParams, GetOneParams, CreateParams, UpdateParams, DeleteParams } from 'react-admin';
-import { stringify } from 'query-string';
+import queryString from 'query-string';
 import { httpClient } from '../services/httpClient';
 import { ApiResponse, PaginationParams, SortParams, FilterParams } from '../types';
 
@@ -48,7 +48,7 @@ class AdminDataProvider implements DataProvider {
   }
 
   async getMany(resource: string, params: { ids: any[] }) {
-    const query = stringify({ ids: params.ids });
+    const query = queryString.stringify({ ids: params.ids });
     const url = `${this.baseUrl}/admin/${resource}?${query}`;
     
     try {
@@ -150,7 +150,7 @@ class AdminDataProvider implements DataProvider {
   }): string {
     const { pagination, sort, filter } = params;
     
-    return stringify({
+    return queryString.stringify({
       page: pagination.page,
       per_page: pagination.perPage,
       sort_field: sort.field,
