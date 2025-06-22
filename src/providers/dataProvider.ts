@@ -22,7 +22,9 @@ class AdminDataProvider implements DataProvider {
       filter,
     });
 
-    const url = `${this.baseUrl}/api/admin/${resource}?${query}`;
+    // Use CMS endpoints for pages resource
+    const endpoint = resource === 'pages' ? 'cms/pages' : `admin/${resource}`;
+    const url = `${this.baseUrl}/api/${endpoint}?${query}`;
     
     try {
       const response = await httpClient.get<ApiResponse<any[]>>(url);
@@ -37,7 +39,8 @@ class AdminDataProvider implements DataProvider {
   }
 
   async getOne(resource: string, params: GetOneParams) {
-    const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
+    const endpoint = resource === 'pages' ? 'cms/pages' : `admin/${resource}`;
+    const url = `${this.baseUrl}/api/${endpoint}/${params.id}`;
     
     try {
       const response = await httpClient.get<ApiResponse<any>>(url);
@@ -85,7 +88,8 @@ class AdminDataProvider implements DataProvider {
   }
 
   async create(resource: string, params: CreateParams) {
-    const url = `${this.baseUrl}/api/admin/${resource}`;
+    const endpoint = resource === 'pages' ? 'cms/pages' : `admin/${resource}`;
+    const url = `${this.baseUrl}/api/${endpoint}`;
     
     try {
       const response = await httpClient.post<ApiResponse<any>>(url, params.data);
@@ -96,7 +100,8 @@ class AdminDataProvider implements DataProvider {
   }
 
   async update(resource: string, params: UpdateParams) {
-    const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
+    const endpoint = resource === 'pages' ? 'cms/pages' : `admin/${resource}`;
+    const url = `${this.baseUrl}/api/${endpoint}/${params.id}`;
     
     try {
       const response = await httpClient.put<ApiResponse<any>>(url, params.data);
@@ -120,7 +125,8 @@ class AdminDataProvider implements DataProvider {
   }
 
   async delete(resource: string, params: DeleteParams) {
-    const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
+    const endpoint = resource === 'pages' ? 'cms/pages' : `admin/${resource}`;
+    const url = `${this.baseUrl}/api/${endpoint}/${params.id}`;
     
     try {
       const response = await httpClient.delete<ApiResponse<any>>(url);
