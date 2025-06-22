@@ -16,6 +16,7 @@ import { ConversationList, ConversationShow } from "./resources/conversations";
 import { UserStatsList } from "./resources/user-stats";
 import { BadgesList } from "./resources/badges";
 import { AssessmentHistoryList } from "./resources/assessment-history";
+import { LearningPlansList } from "./resources/learning-plans";
 
 export const App = () => (
   <Admin
@@ -60,7 +61,7 @@ export const App = () => (
     />
     <Resource
       name="learning_plans"
-      list={() => <div>Learning Plans (Coming Soon)</div>}
+      list={LearningPlansList}
       icon={School}
       options={{ label: "Learning Plans" }}
     />
