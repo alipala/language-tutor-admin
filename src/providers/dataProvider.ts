@@ -22,7 +22,7 @@ class AdminDataProvider implements DataProvider {
       filter,
     });
 
-    const url = `${this.baseUrl}/admin/${resource}?${query}`;
+    const url = `${this.baseUrl}/api/admin/${resource}?${query}`;
     
     try {
       const response = await httpClient.get<ApiResponse<any[]>>(url);
@@ -37,7 +37,7 @@ class AdminDataProvider implements DataProvider {
   }
 
   async getOne(resource: string, params: GetOneParams) {
-    const url = `${this.baseUrl}/admin/${resource}/${params.id}`;
+    const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
     
     try {
       const response = await httpClient.get<ApiResponse<any>>(url);
@@ -49,7 +49,7 @@ class AdminDataProvider implements DataProvider {
 
   async getMany(resource: string, params: { ids: any[] }) {
     const query = queryString.stringify({ ids: params.ids });
-    const url = `${this.baseUrl}/admin/${resource}?${query}`;
+    const url = `${this.baseUrl}/api/admin/${resource}?${query}`;
     
     try {
       const response = await httpClient.get<ApiResponse<any[]>>(url);
@@ -70,7 +70,7 @@ class AdminDataProvider implements DataProvider {
       filter,
     });
 
-    const url = `${this.baseUrl}/admin/${resource}?${query}`;
+    const url = `${this.baseUrl}/api/admin/${resource}?${query}`;
     
     try {
       const response = await httpClient.get<ApiResponse<any[]>>(url);
@@ -85,7 +85,7 @@ class AdminDataProvider implements DataProvider {
   }
 
   async create(resource: string, params: CreateParams) {
-    const url = `${this.baseUrl}/admin/${resource}`;
+    const url = `${this.baseUrl}/api/admin/${resource}`;
     
     try {
       const response = await httpClient.post<ApiResponse<any>>(url, params.data);
@@ -96,7 +96,7 @@ class AdminDataProvider implements DataProvider {
   }
 
   async update(resource: string, params: UpdateParams) {
-    const url = `${this.baseUrl}/admin/${resource}/${params.id}`;
+    const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
     
     try {
       const response = await httpClient.put<ApiResponse<any>>(url, params.data);
@@ -108,7 +108,7 @@ class AdminDataProvider implements DataProvider {
 
   async updateMany(resource: string, params: { ids: any[]; data: any }) {
     const promises = params.ids.map(id =>
-      httpClient.put<ApiResponse<any>>(`${this.baseUrl}/admin/${resource}/${id}`, params.data)
+      httpClient.put<ApiResponse<any>>(`${this.baseUrl}/api/admin/${resource}/${id}`, params.data)
     );
     
     try {
@@ -120,7 +120,7 @@ class AdminDataProvider implements DataProvider {
   }
 
   async delete(resource: string, params: DeleteParams) {
-    const url = `${this.baseUrl}/admin/${resource}/${params.id}`;
+    const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
     
     try {
       const response = await httpClient.delete<ApiResponse<any>>(url);
@@ -132,7 +132,7 @@ class AdminDataProvider implements DataProvider {
 
   async deleteMany(resource: string, params: { ids: any[] }) {
     const promises = params.ids.map(id =>
-      httpClient.delete(`${this.baseUrl}/admin/${resource}/${id}`)
+      httpClient.delete(`${this.baseUrl}/api/admin/${resource}/${id}`)
     );
     
     try {
@@ -160,5 +160,7 @@ class AdminDataProvider implements DataProvider {
   }
 }
 
+import { API_CONFIG } from '../config/constants';
+
 // Export configured data provider
-export const dataProvider = new AdminDataProvider('');
+export const dataProvider = new AdminDataProvider(API_CONFIG.BASE_URL);
