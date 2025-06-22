@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   List,
   Datagrid,
@@ -7,7 +7,8 @@ import {
   ReferenceField,
   DateField,
   FunctionField,
-  useRecordContext
+  useRecordContext,
+  useDataProvider
 } from 'react-admin';
 import { Chip, Box, LinearProgress } from '@mui/material';
 
@@ -139,6 +140,39 @@ const DurationDisplay = () => {
   );
 };
 
+const UserDisplay = () => {
+  const record = useRecordContext();
+  const dataProvider = useDataProvider();
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    if (record?.user_id) {
+      dataProvider.getOne('users', { id: record.user_id })
+        .then(response => {
+          setUser(response.data);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error('Error fetching user:', error);
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
+    }
+  }, [record?.user_id, dataProvider]);
+  
+  if (loading) return <span>Loading...</span>;
+  if (!user) return <span>Unknown User</span>;
+  
+  return (
+    <Box>
+      <div style={{ fontWeight: 'bold' }}>{user.name || 'No Name'}</div>
+      <div style={{ fontSize: '0.8em', color: '#666' }}>{user.email}</div>
+    </Box>
+  );
+};
+
 export const LearningPlansList = () => (
   <List
     title="Learning Plans"
@@ -147,9 +181,10 @@ export const LearningPlansList = () => (
   >
     <Datagrid rowClick="show">
       <TextField source="id" label="Plan ID" />
-      <ReferenceField source="user_id" reference="users" label="User">
-        <TextField source="email" />
-      </ReferenceField>
+      <FunctionField 
+        label="User" 
+        render={() => <UserDisplay />}
+      />
       <TextField source="language" label="Language" />
       <FunctionField 
         label="Level" 
