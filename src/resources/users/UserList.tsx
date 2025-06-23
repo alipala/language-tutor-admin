@@ -429,11 +429,8 @@ export const UserList = () => (
       <TextField source="id" label="ID" />
       <TextField source="name" label="Name" />
       <EmailField source="email" label="Email" />
-      <UserStatusField />
-      <LanguageField />
       <TextField source="preferred_level" label="Level" />
       <DateField source="created_at" label="Created" showTime />
-      <DateField source="last_login" label="Last Login" showTime />
       <ShowButton />
       <EditButton />
       <ActionButtons />
