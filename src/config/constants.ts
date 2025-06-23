@@ -1,6 +1,6 @@
 // Application configuration constants
 export const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  BASE_URL: import.meta.env.VITE_API_URL || 'https://mytacoai.com',
   ENDPOINTS: {
     ADMIN_LOGIN: '/api/admin/login',
     ADMIN_USERS: '/api/admin/users',
