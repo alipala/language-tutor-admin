@@ -8,11 +8,12 @@ import {
   TopToolbar,
   ListButton,
   ShowButton,
-  DeleteButton,
   useRecordContext,
   useDelete,
   useNotify,
   useRedirect,
+  SaveButton,
+  Toolbar,
 } from 'react-admin';
 import {
   Dialog,
@@ -24,9 +25,23 @@ import {
   AlertTitle,
   Typography,
   Box,
-  IconButton,
+  Card,
+  CardContent,
+  Divider,
+  Chip,
+  Stack,
 } from '@mui/material';
-import { Warning, Delete } from '@mui/icons-material';
+import { 
+  Warning, 
+  Delete, 
+  Person, 
+  Email, 
+  Language, 
+  School,
+  Security,
+  CheckCircle,
+  Cancel
+} from '@mui/icons-material';
 
 // Language options for the select input
 const languageChoices = [
@@ -53,169 +68,152 @@ const levelChoices = [
   { id: 'C2', name: 'C2 - Proficient' },
 ];
 
-// Custom Delete Button with Confirmation Modal
-const DeleteUserWithConfirmation = () => {
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [deleteUser, { isLoading }] = useDelete();
-  const notify = useNotify();
-  const redirect = useRedirect();
-  const record = useRecordContext();
+// Custom Delete Confirmation Modal
+interface DeleteUserModalProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  user: any;
+  isLoading: boolean;
+}
 
-  console.log('DeleteUserWithConfirmation rendering, record:', record);
-
-  if (!record) {
-    console.log('DeleteUserWithConfirmation: No record found, returning null');
-    return null;
-  }
-
-  const handleDelete = async () => {
-    if (!record) return;
+const DeleteUserModal: React.FC<DeleteUserModalProps> = ({ open, onClose, onConfirm, user, isLoading }) => (
+  <Dialog
+    open={open}
+    onClose={onClose}
+    maxWidth="md"
+    fullWidth
+    PaperProps={{
+      sx: {
+        borderRadius: 3,
+        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
+      }
+    }}
+  >
+    <DialogTitle sx={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      gap: 2,
+      pb: 2,
+      borderBottom: '1px solid #e0e0e0',
+      backgroundColor: '#fafafa'
+    }}>
+      <Warning sx={{ color: '#f44336', fontSize: 28 }} />
+      <Typography variant="h5" sx={{ fontWeight: 600, color: '#333' }}>
+        Delete User Account
+      </Typography>
+    </DialogTitle>
     
-    try {
-      await deleteUser('users', { id: record.id });
-      notify(`User ${record.email} deleted successfully`, { type: 'success' });
-      setDeleteModalOpen(false);
-      redirect('/users');
-    } catch (error) {
-      notify('Error deleting user', { type: 'error' });
-      console.error('Delete error:', error);
-    }
-  };
+    <DialogContent sx={{ pt: 3, pb: 2 }}>
+      <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+        <AlertTitle sx={{ fontWeight: 600 }}>⚠️ Permanent Action</AlertTitle>
+        This action cannot be undone. All user data will be permanently deleted.
+      </Alert>
+      
+      <Card sx={{ mb: 3, border: '1px solid #e0e0e0' }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: '#333', mb: 2 }}>
+            User Information
+          </Typography>
+          <Stack spacing={2}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Person sx={{ color: '#666', fontSize: 20 }} />
+              <Typography variant="body1">
+                <strong>Name:</strong> {user?.name || 'N/A'}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Email sx={{ color: '#666', fontSize: 20 }} />
+              <Typography variant="body1">
+                <strong>Email:</strong> {user?.email}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Security sx={{ color: '#666', fontSize: 20 }} />
+              <Typography variant="body1">
+                <strong>Status:</strong>
+                <Chip 
+                  label={user?.is_active ? 'Active' : 'Inactive'} 
+                  color={user?.is_active ? 'success' : 'default'}
+                  size="small"
+                  sx={{ ml: 1 }}
+                />
+                <Chip 
+                  label={user?.is_verified ? 'Verified' : 'Unverified'} 
+                  color={user?.is_verified ? 'info' : 'warning'}
+                  size="small"
+                  sx={{ ml: 1 }}
+                />
+              </Typography>
+            </Box>
+          </Stack>
+        </CardContent>
+      </Card>
 
-  const handleDeleteClick = () => {
-    setDeleteModalOpen(true);
-  };
+      <Alert severity="warning" sx={{ borderRadius: 2 }}>
+        <AlertTitle sx={{ fontWeight: 600 }}>📊 Data to be deleted:</AlertTitle>
+        <Typography variant="body2" sx={{ mt: 1, lineHeight: 1.6 }}>
+          • User account and profile information<br/>
+          • All conversation sessions and chat history<br/>
+          • Learning plans and progress tracking data<br/>
+          • Assessment results and statistics<br/>
+          • User preferences and settings
+        </Typography>
+      </Alert>
+    </DialogContent>
 
-  return (
-    <>
+    <DialogActions sx={{ 
+      p: 3, 
+      pt: 2,
+      borderTop: '1px solid #e0e0e0',
+      backgroundColor: '#fafafa',
+      gap: 2
+    }}>
+      <Button 
+        onClick={onClose} 
+        variant="outlined"
+        size="large"
+        sx={{
+          borderRadius: 2,
+          textTransform: 'none',
+          fontWeight: 500,
+          minWidth: 120,
+          borderColor: '#ccc',
+          color: '#666',
+          '&:hover': {
+            borderColor: '#999',
+            backgroundColor: '#f5f5f5'
+          }
+        }}
+      >
+        Cancel
+      </Button>
       <Button
-        onClick={handleDeleteClick}
+        onClick={onConfirm}
         variant="contained"
         color="error"
+        size="large"
+        disabled={isLoading}
         startIcon={<Delete />}
         sx={{
-          mt: 2,
           borderRadius: 2,
           textTransform: 'none',
           fontWeight: 600,
           minWidth: 140,
-          boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
+          boxShadow: '0 4px 12px rgba(244, 67, 54, 0.3)',
           '&:hover': {
-            boxShadow: '0 4px 12px rgba(244, 67, 54, 0.4)',
+            boxShadow: '0 6px 16px rgba(244, 67, 54, 0.4)',
           },
         }}
       >
-        Delete User
+        {isLoading ? 'Deleting...' : 'Delete User'}
       </Button>
+    </DialogActions>
+  </Dialog>
+);
 
-      {/* Delete Confirmation Modal */}
-      <Dialog
-        open={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 3,
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-          }
-        }}
-      >
-        <DialogTitle sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 2,
-          pb: 1,
-          borderBottom: '1px solid #f0f0f0'
-        }}>
-          <Warning sx={{ color: '#f44336', fontSize: 32 }} />
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Confirm User Deletion
-          </Typography>
-        </DialogTitle>
-        
-        <DialogContent sx={{ pt: 3 }}>
-          <Alert severity="error" sx={{ mb: 3 }}>
-            <AlertTitle sx={{ fontWeight: 600 }}>This action cannot be undone!</AlertTitle>
-            You are about to permanently delete this user and all their associated data.
-          </Alert>
-          
-          <Box sx={{ 
-            mb: 3, 
-            p: 2, 
-            backgroundColor: '#f8f9fa', 
-            borderRadius: 2,
-            border: '1px solid #e9ecef'
-          }}>
-            <Typography variant="body1" gutterBottom sx={{ fontWeight: 600, color: '#495057' }}>
-              User Details:
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 0.5, color: '#6c757d' }}>
-              <strong>Name:</strong> {record.name || 'N/A'}
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 0.5, color: '#6c757d' }}>
-              <strong>Email:</strong> {record.email}
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#6c757d' }}>
-              <strong>ID:</strong> {record.id}
-            </Typography>
-          </Box>
-
-          <Alert severity="warning" sx={{ borderRadius: 2 }}>
-            <AlertTitle sx={{ fontWeight: 600 }}>Data that will be deleted:</AlertTitle>
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              • User account and profile information<br/>
-              • All conversation sessions and chat history<br/>
-              • All learning plans and progress data<br/>
-              • User statistics and analytics data
-            </Typography>
-          </Alert>
-        </DialogContent>
-
-        <DialogActions sx={{ 
-          p: 3, 
-          pt: 2,
-          borderTop: '1px solid #f0f0f0',
-          gap: 1
-        }}>
-          <Button 
-            onClick={() => setDeleteModalOpen(false)} 
-            variant="outlined"
-            sx={{
-              borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 500,
-              minWidth: 100,
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleDelete}
-            variant="contained"
-            color="error"
-            disabled={isLoading}
-            sx={{
-              borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 600,
-              minWidth: 120,
-              boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
-              '&:hover': {
-                boxShadow: '0 4px 12px rgba(244, 67, 54, 0.4)',
-              },
-            }}
-          >
-            {isLoading ? 'Deleting...' : 'Delete User'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  );
-};
-
-// Edit actions toolbar with Delete button
-const UserEditActions = () => {
+// Custom Toolbar with Save and Delete buttons
+const UserEditToolbar = () => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteUser, { isLoading }] = useDelete();
   const notify = useNotify();
@@ -236,194 +234,197 @@ const UserEditActions = () => {
     }
   };
 
-  const handleDeleteClick = () => {
-    setDeleteModalOpen(true);
-  };
-
-  if (!record) {
-    return (
-      <TopToolbar>
-        <ListButton />
-        <ShowButton />
-      </TopToolbar>
-    );
-  }
-
   return (
     <>
-      <TopToolbar>
-        <ListButton />
-        <ShowButton />
-        <Button
-          onClick={handleDeleteClick}
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <SaveButton 
           variant="contained"
-          color="error"
-          startIcon={<Delete />}
+          size="large"
           sx={{
             borderRadius: 2,
             textTransform: 'none',
             fontWeight: 600,
             minWidth: 120,
-            boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
-            '&:hover': {
-              boxShadow: '0 4px 12px rgba(244, 67, 54, 0.4)',
-            },
+            boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
           }}
-        >
-          Delete
-        </Button>
-      </TopToolbar>
-
-      {/* Delete Confirmation Modal */}
-      <Dialog
-        open={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 3,
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-          }
-        }}
-      >
-        <DialogTitle sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 2,
-          pb: 1,
-          borderBottom: '1px solid #f0f0f0'
-        }}>
-          <Warning sx={{ color: '#f44336', fontSize: 32 }} />
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Confirm User Deletion
-          </Typography>
-        </DialogTitle>
+        />
         
-        <DialogContent sx={{ pt: 3 }}>
-          <Alert severity="error" sx={{ mb: 3 }}>
-            <AlertTitle sx={{ fontWeight: 600 }}>This action cannot be undone!</AlertTitle>
-            You are about to permanently delete this user and all their associated data.
-          </Alert>
-          
-          <Box sx={{ 
-            mb: 3, 
-            p: 2, 
-            backgroundColor: '#f8f9fa', 
-            borderRadius: 2,
-            border: '1px solid #e9ecef'
-          }}>
-            <Typography variant="body1" gutterBottom sx={{ fontWeight: 600, color: '#495057' }}>
-              User Details:
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 0.5, color: '#6c757d' }}>
-              <strong>Name:</strong> {record.name || 'N/A'}
-            </Typography>
-            <Typography variant="body2" sx={{ mb: 0.5, color: '#6c757d' }}>
-              <strong>Email:</strong> {record.email}
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#6c757d' }}>
-              <strong>ID:</strong> {record.id}
-            </Typography>
-          </Box>
-
-          <Alert severity="warning" sx={{ borderRadius: 2 }}>
-            <AlertTitle sx={{ fontWeight: 600 }}>Data that will be deleted:</AlertTitle>
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              • User account and profile information<br/>
-              • All conversation sessions and chat history<br/>
-              • All learning plans and progress data<br/>
-              • User statistics and analytics data
-            </Typography>
-          </Alert>
-        </DialogContent>
-
-        <DialogActions sx={{ 
-          p: 3, 
-          pt: 2,
-          borderTop: '1px solid #f0f0f0',
-          gap: 1
-        }}>
-          <Button 
-            onClick={() => setDeleteModalOpen(false)} 
-            variant="outlined"
-            sx={{
-              borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 500,
-              minWidth: 100,
-            }}
-          >
-            Cancel
-          </Button>
+        {record && (
           <Button
-            onClick={handleDelete}
-            variant="contained"
+            onClick={() => setDeleteModalOpen(true)}
+            variant="outlined"
             color="error"
-            disabled={isLoading}
+            size="large"
+            startIcon={<Delete />}
             sx={{
               borderRadius: 2,
               textTransform: 'none',
               fontWeight: 600,
-              minWidth: 120,
-              boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
+              minWidth: 140,
+              borderWidth: 2,
               '&:hover': {
-                boxShadow: '0 4px 12px rgba(244, 67, 54, 0.4)',
+                borderWidth: 2,
+                backgroundColor: 'rgba(244, 67, 54, 0.04)',
               },
             }}
           >
-            {isLoading ? 'Deleting...' : 'Delete User'}
+            Delete User
           </Button>
-        </DialogActions>
-      </Dialog>
+        )}
+      </Toolbar>
+
+      {record && (
+        <DeleteUserModal
+          open={deleteModalOpen}
+          onClose={() => setDeleteModalOpen(false)}
+          onConfirm={handleDelete}
+          user={record}
+          isLoading={isLoading}
+        />
+      )}
     </>
   );
 };
 
-// Main User edit component
+// Top Actions with enhanced styling
+const UserEditActions = () => {
+  const record = useRecordContext();
+
+  return (
+    <TopToolbar sx={{ gap: 1 }}>
+      <ListButton 
+        variant="outlined"
+        sx={{
+          borderRadius: 2,
+          textTransform: 'none',
+          fontWeight: 500,
+        }}
+      />
+      <ShowButton 
+        variant="outlined"
+        sx={{
+          borderRadius: 2,
+          textTransform: 'none',
+          fontWeight: 500,
+        }}
+      />
+    </TopToolbar>
+  );
+};
+
+// User Status Display Component
+const UserStatusDisplay = () => {
+  const record = useRecordContext();
+  
+  if (!record) return null;
+
+  return (
+    <Card sx={{ mb: 3, border: '1px solid #e0e0e0' }}>
+      <CardContent>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: '#333', mb: 2 }}>
+          Account Status
+        </Typography>
+        <Stack direction="row" spacing={2}>
+          <Chip
+            icon={record.is_active ? <CheckCircle /> : <Cancel />}
+            label={record.is_active ? 'Active Account' : 'Inactive Account'}
+            color={record.is_active ? 'success' : 'default'}
+            variant="outlined"
+          />
+          <Chip
+            icon={record.is_verified ? <CheckCircle /> : <Cancel />}
+            label={record.is_verified ? 'Email Verified' : 'Email Unverified'}
+            color={record.is_verified ? 'info' : 'warning'}
+            variant="outlined"
+          />
+        </Stack>
+      </CardContent>
+    </Card>
+  );
+};
+
+// Main User Edit Component
 export const UserEdit = () => (
   <Edit actions={<UserEditActions />}>
-    <SimpleForm>
-      <TextInput source="name" label="Full Name" required />
-      <TextInput source="email" label="Email Address" type="email" disabled />
+    <SimpleForm toolbar={<UserEditToolbar />}>
+      {/* User Status Display */}
+      <UserStatusDisplay />
       
-      {/* SOLUTION: Move Delete button RIGHT AFTER TextInputs */}
-      <div style={{ backgroundColor: 'orange', color: 'white', padding: '10px', margin: '10px' }}>
-        SUCCESS: Delete button AFTER TextInputs (SHOULD WORK!)
-      </div>
-      <DeleteUserWithConfirmation />
-      
-      <BooleanInput source="is_active" label="Active" />
-      <BooleanInput source="is_verified" label="Verified" />
-      
-      <SelectInput
-        source="preferred_language"
-        label="Preferred Language"
-        choices={languageChoices}
-        emptyText="No language selected"
-      />
-      <SelectInput
-        source="preferred_level"
-        label="Preferred Level"
-        choices={levelChoices}
-        emptyText="No level selected"
-      />
-      
-      {/* TEST: Move debug elements higher to see where form cuts off */}
-      <div style={{ backgroundColor: 'green', color: 'white', padding: '10px', margin: '10px' }}>
-        DEBUG: This should appear AFTER SelectInputs
-      </div>
-      
-      {/* Simple fallback button for testing */}
-      <Button
-        variant="contained"
-        color="error"
-        sx={{ mt: 2 }}
-        onClick={() => alert('Simple Delete Button Works!')}
-      >
-        SIMPLE DELETE BUTTON (FALLBACK)
-      </Button>
+      {/* Basic Information Section */}
+      <Card sx={{ mb: 3, border: '1px solid #e0e0e0' }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: '#333', mb: 3 }}>
+            <Person sx={{ mr: 1, verticalAlign: 'middle' }} />
+            Basic Information
+          </Typography>
+          
+          <TextInput 
+            source="name" 
+            label="Full Name" 
+            required 
+            fullWidth
+            sx={{ mb: 2 }}
+          />
+          <TextInput 
+            source="email" 
+            label="Email Address" 
+            type="email" 
+            disabled 
+            fullWidth
+            helperText="Email address cannot be changed"
+          />
+        </CardContent>
+      </Card>
+
+      {/* Account Settings Section */}
+      <Card sx={{ mb: 3, border: '1px solid #e0e0e0' }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: '#333', mb: 3 }}>
+            <Security sx={{ mr: 1, verticalAlign: 'middle' }} />
+            Account Settings
+          </Typography>
+          
+          <Stack spacing={2}>
+            <BooleanInput 
+              source="is_active" 
+              label="Account Active" 
+              helperText="Deactivating will prevent user from logging in"
+            />
+            <BooleanInput 
+              source="is_verified" 
+              label="Email Verified" 
+              helperText="Verified users have confirmed their email address"
+            />
+          </Stack>
+        </CardContent>
+      </Card>
+
+      {/* Learning Preferences Section */}
+      <Card sx={{ mb: 3, border: '1px solid #e0e0e0' }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, color: '#333', mb: 3 }}>
+            <Language sx={{ mr: 1, verticalAlign: 'middle' }} />
+            Learning Preferences
+          </Typography>
+          
+          <Stack spacing={2}>
+            <SelectInput
+              source="preferred_language"
+              label="Preferred Language"
+              choices={languageChoices}
+              emptyText="No language selected"
+              fullWidth
+            />
+            <SelectInput
+              source="preferred_level"
+              label="Current Level"
+              choices={levelChoices}
+              emptyText="No level selected"
+              fullWidth
+            />
+          </Stack>
+        </CardContent>
+      </Card>
     </SimpleForm>
   </Edit>
 );
-console.log('DeleteUserWithConfirmation component loaded');
