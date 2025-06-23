@@ -43,7 +43,29 @@ export const Dashboard: React.FC = () => {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        const data = await httpClient.get<DashboardMetrics>(API_CONFIG.ENDPOINTS.ADMIN_DASHBOARD);
+        
+        // Clear any potential localStorage cache
+        localStorage.removeItem('dashboard_cache');
+        localStorage.removeItem('admin_dashboard_data');
+        
+        // Add aggressive cache busting
+        const cacheBuster = `?t=${Date.now()}&r=${Math.random()}`;
+        const fullUrl = `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN_DASHBOARD}${cacheBuster}`;
+        
+        console.log('=== DASHBOARD DEBUG ===');
+        console.log('BASE_URL:', API_CONFIG.BASE_URL);
+        console.log('ENDPOINT:', API_CONFIG.ENDPOINTS.ADMIN_DASHBOARD);
+        console.log('Full URL:', fullUrl);
+        console.log('Cache buster:', cacheBuster);
+        
+        const data = await httpClient.get<DashboardMetrics>(fullUrl);
+        
+        console.log('=== API RESPONSE ===');
+        console.log('Raw response:', data);
+        console.log('Total users:', data.total_users);
+        console.log('Active users:', data.active_users);
+        console.log('===================');
+        
         setMetrics(data);
         setError(null);
       } catch (err) {
@@ -89,10 +111,10 @@ export const Dashboard: React.FC = () => {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" gutterBottom>
-        Dashboard
+        Dashboard - DEBUG VERSION v3.0
       </Typography>
       <Typography variant="body1" color="textSecondary" paragraph>
-        Welcome to the Language Tutor Admin Panel
+        Welcome to the Language Tutor Admin Panel - CACHE BUSTING ACTIVE
       </Typography>
 
       <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 3, mb: 4 }}>
