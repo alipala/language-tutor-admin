@@ -211,14 +211,14 @@ const UserListActions = () => (
   </TopToolbar>
 );
 
-// Action Buttons Component - Simplified approach
-const ActionButtons = ({ record }: { record?: any }) => {
+// Delete Button Component with Confirmation Modal
+const DeleteUserButton = ({ record }: { record?: any }) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteUser, { isLoading }] = useDelete();
   const notify = useNotify();
   const refresh = useRefresh();
 
-  if (!record) return <span>-</span>;
+  if (!record) return null;
 
   const handleDelete = async () => {
     try {
@@ -232,16 +232,6 @@ const ActionButtons = ({ record }: { record?: any }) => {
     }
   };
 
-  const handleShowUser = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    window.location.href = `#/users/${record.id}/show`;
-  };
-
-  const handleEditUser = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    window.location.href = `#/users/${record.id}`;
-  };
-
   const handleDeleteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setDeleteModalOpen(true);
@@ -249,52 +239,20 @@ const ActionButtons = ({ record }: { record?: any }) => {
 
   return (
     <>
-      <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
-        <Tooltip title="View User">
-          <IconButton
-            onClick={handleShowUser}
-            size="small"
-            sx={{
-              color: '#2196f3',
-              '&:hover': {
-                backgroundColor: 'rgba(33, 150, 243, 0.1)',
-              },
-            }}
-          >
-            <Visibility fontSize="small" />
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="Edit User">
-          <IconButton
-            onClick={handleEditUser}
-            size="small"
-            sx={{
-              color: '#ff9800',
-              '&:hover': {
-                backgroundColor: 'rgba(255, 152, 0, 0.1)',
-              },
-            }}
-          >
-            <Edit fontSize="small" />
-          </IconButton>
-        </Tooltip>
-
-        <Tooltip title="Delete User">
-          <IconButton
-            onClick={handleDeleteClick}
-            size="small"
-            sx={{
-              color: '#f44336',
-              '&:hover': {
-                backgroundColor: 'rgba(244, 67, 54, 0.1)',
-              },
-            }}
-          >
-            <Delete fontSize="small" />
-          </IconButton>
-        </Tooltip>
-      </Box>
+      <Tooltip title="Delete User">
+        <IconButton
+          onClick={handleDeleteClick}
+          size="small"
+          sx={{
+            color: '#f44336',
+            '&:hover': {
+              backgroundColor: 'rgba(244, 67, 54, 0.1)',
+            },
+          }}
+        >
+          <Delete fontSize="small" />
+        </IconButton>
+      </Tooltip>
 
       {/* Delete Confirmation Modal */}
       <Dialog
@@ -448,7 +406,9 @@ export const UserList = () => (
       <LanguageField />
       <TextField source="preferred_level" label="Level" sx={{ minWidth: 80 }} />
       <DateField source="created_at" label="Created" showTime sx={{ minWidth: 150 }} />
-      <ActionButtons />
+      <ShowButton />
+      <EditButton />
+      <DeleteUserButton />
     </Datagrid>
   </List>
 );
