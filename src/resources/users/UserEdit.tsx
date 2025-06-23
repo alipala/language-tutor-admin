@@ -61,7 +61,12 @@ const DeleteUserWithConfirmation = () => {
   const redirect = useRedirect();
   const record = useRecordContext();
 
-  if (!record) return null;
+  console.log('DeleteUserWithConfirmation rendering, record:', record);
+
+  if (!record) {
+    console.log('DeleteUserWithConfirmation: No record found, returning null');
+    return null;
+  }
 
   const handleDelete = async () => {
     if (!record) return;
@@ -401,3 +406,4 @@ export const UserEdit = () => (
     </SimpleForm>
   </Edit>
 );
+console.log('DeleteUserWithConfirmation component loaded');
