@@ -434,6 +434,8 @@ export const UserList = () => (
       <TextField source="preferred_level" label="Level" />
       <DateField source="created_at" label="Created" showTime />
       <DateField source="last_login" label="Last Login" showTime />
+      <ShowButton />
+      <EditButton />
       <ActionButtons />
     </Datagrid>
   </List>
