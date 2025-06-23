@@ -200,8 +200,8 @@ const UserListActions = () => (
   </TopToolbar>
 );
 
-// Delete button with confirmation modal
-const DeleteUserButton = ({ record }: { record?: any }) => {
+// Modern action buttons with hover effects
+const ActionButtons = ({ record }: { record?: any }) => {
   const [open, setOpen] = useState(false);
   const [deleteUser, { isLoading }] = useDelete();
   const notify = useNotify();
@@ -222,7 +222,68 @@ const DeleteUserButton = ({ record }: { record?: any }) => {
   };
 
   return (
-    <>
+    <Box 
+      sx={{ 
+        display: 'flex', 
+        gap: 0.5,
+        opacity: 0.7,
+        transition: 'opacity 0.2s ease-in-out',
+        '&:hover': {
+          opacity: 1,
+        },
+      }}
+    >
+      {/* Show Button */}
+      <IconButton
+        onClick={(e) => {
+          e.stopPropagation();
+          // Navigate to show page
+          window.location.href = `/_admin/#/users/${record.id}/show`;
+        }}
+        size="small"
+        sx={{
+          color: '#2196f3',
+          backgroundColor: 'rgba(33, 150, 243, 0.1)',
+          border: '1px solid rgba(33, 150, 243, 0.2)',
+          borderRadius: 2,
+          transition: 'all 0.2s ease-in-out',
+          '&:hover': {
+            backgroundColor: 'rgba(33, 150, 243, 0.2)',
+            transform: 'translateY(-1px)',
+            boxShadow: '0 4px 8px rgba(33, 150, 243, 0.3)',
+          },
+        }}
+        title="View User Details"
+      >
+        <Search fontSize="small" />
+      </IconButton>
+
+      {/* Edit Button */}
+      <IconButton
+        onClick={(e) => {
+          e.stopPropagation();
+          // Navigate to edit page
+          window.location.href = `/_admin/#/users/${record.id}`;
+        }}
+        size="small"
+        sx={{
+          color: '#ff9800',
+          backgroundColor: 'rgba(255, 152, 0, 0.1)',
+          border: '1px solid rgba(255, 152, 0, 0.2)',
+          borderRadius: 2,
+          transition: 'all 0.2s ease-in-out',
+          '&:hover': {
+            backgroundColor: 'rgba(255, 152, 0, 0.2)',
+            transform: 'translateY(-1px)',
+            boxShadow: '0 4px 8px rgba(255, 152, 0, 0.3)',
+          },
+        }}
+        title="Edit User"
+      >
+        <PersonAdd fontSize="small" />
+      </IconButton>
+
+      {/* Delete Button */}
       <IconButton
         onClick={(e) => {
           e.stopPropagation();
@@ -230,15 +291,23 @@ const DeleteUserButton = ({ record }: { record?: any }) => {
         }}
         size="small"
         sx={{
-          color: '#d32f2f',
+          color: '#f44336',
+          backgroundColor: 'rgba(244, 67, 54, 0.1)',
+          border: '1px solid rgba(244, 67, 54, 0.2)',
+          borderRadius: 2,
+          transition: 'all 0.2s ease-in-out',
           '&:hover': {
-            backgroundColor: 'rgba(211, 47, 47, 0.1)',
+            backgroundColor: 'rgba(244, 67, 54, 0.2)',
+            transform: 'translateY(-1px)',
+            boxShadow: '0 4px 8px rgba(244, 67, 54, 0.3)',
           },
         }}
+        title="Delete User"
       >
         <Delete fontSize="small" />
       </IconButton>
 
+      {/* Confirmation Modal */}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
@@ -248,39 +317,40 @@ const DeleteUserButton = ({ record }: { record?: any }) => {
           sx: {
             borderRadius: 3,
             padding: 2,
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.15)',
           },
         }}
       >
         <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 2, pb: 1 }}>
-          <Warning sx={{ color: '#d32f2f', fontSize: 32 }} />
-          <Typography variant="h6" component="div">
+          <Warning sx={{ color: '#f44336', fontSize: 32 }} />
+          <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
             Confirm User Deletion
           </Typography>
         </DialogTitle>
         
         <DialogContent>
-          <Alert severity="error" sx={{ mb: 2 }}>
-            <AlertTitle>This action cannot be undone!</AlertTitle>
+          <Alert severity="error" sx={{ mb: 2, borderRadius: 2 }}>
+            <AlertTitle sx={{ fontWeight: 600 }}>This action cannot be undone!</AlertTitle>
             You are about to permanently delete this user and all their associated data.
           </Alert>
           
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="body1" gutterBottom>
-              <strong>User Details:</strong>
+          <Box sx={{ mb: 2, p: 2, backgroundColor: '#f5f5f5', borderRadius: 2 }}>
+            <Typography variant="body1" gutterBottom sx={{ fontWeight: 600 }}>
+              User Details:
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              • Name: {record.name}
+              • Name: <strong>{record.name}</strong>
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              • Email: {record.email}
+              • Email: <strong>{record.email}</strong>
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              • ID: {record.id}
+              • ID: <strong>{record.id}</strong>
             </Typography>
           </Box>
 
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            <AlertTitle>Data that will be deleted:</AlertTitle>
+          <Alert severity="warning" sx={{ mb: 2, borderRadius: 2 }}>
+            <AlertTitle sx={{ fontWeight: 600 }}>Data that will be deleted:</AlertTitle>
             <Typography variant="body2">
               • User account and profile information<br/>
               • All conversation sessions<br/>
@@ -289,18 +359,21 @@ const DeleteUserButton = ({ record }: { record?: any }) => {
             </Typography>
           </Alert>
 
-          <Typography variant="body2" color="text.secondary">
-            Please type the user's email address to confirm deletion:
+          <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+            This action will permanently remove all user data from the system.
           </Typography>
         </DialogContent>
 
-        <DialogActions sx={{ px: 3, pb: 2 }}>
+        <DialogActions sx={{ px: 3, pb: 2, gap: 1 }}>
           <Button
             onClick={() => setOpen(false)}
             variant="outlined"
             sx={{
               borderColor: '#666',
               color: '#666',
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 500,
               '&:hover': {
                 borderColor: '#333',
                 backgroundColor: 'rgba(0, 0, 0, 0.04)',
@@ -314,9 +387,12 @@ const DeleteUserButton = ({ record }: { record?: any }) => {
             variant="contained"
             disabled={isLoading}
             sx={{
-              backgroundColor: '#d32f2f',
+              backgroundColor: '#f44336',
+              borderRadius: 2,
+              textTransform: 'none',
+              fontWeight: 600,
               '&:hover': {
-                backgroundColor: '#b71c1c',
+                backgroundColor: '#d32f2f',
               },
               '&:disabled': {
                 backgroundColor: '#ffcdd2',
@@ -327,7 +403,7 @@ const DeleteUserButton = ({ record }: { record?: any }) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Box>
   );
 };
 
@@ -358,9 +434,7 @@ export const UserList = () => (
       <TextField source="preferred_level" label="Level" />
       <DateField source="created_at" label="Created" showTime />
       <DateField source="last_login" label="Last Login" showTime />
-      <ShowButton />
-      <EditButton />
-      <DeleteUserButton />
+      <ActionButtons />
     </Datagrid>
   </List>
 );
