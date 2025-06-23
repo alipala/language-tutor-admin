@@ -17,16 +17,8 @@ export default defineConfig({
     },
     // Clear output directory before build
     emptyOutDir: true,
-    // Disable build cache in production
-    ...(process.env.NODE_ENV === 'production' && {
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true
-        }
-      }
-    })
+    // Use default minification to avoid resource issues
+    minify: true
   },
   preview: {
     host: '0.0.0.0',
