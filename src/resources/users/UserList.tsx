@@ -274,7 +274,7 @@ const CustomDeleteButton = ({ record }: { record?: any }) => {
   );
 };
 
-// Main Users list component with modern styling
+// Main Users list component with modern styling and hover effects
 export const UserList = () => (
   <List
     actions={<UserListActions />}
@@ -302,6 +302,49 @@ export const UserList = () => (
         borderBottom: '1px solid #f0f0f0',
         padding: '12px 8px',
       },
+      // Enhanced hover effects for rows
+      '& .MuiTableRow-root': {
+        transition: 'all 0.2s ease-in-out',
+        '&:hover': {
+          backgroundColor: 'rgba(247, 90, 90, 0.04)',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+          transform: 'translateY(-1px)',
+          '& .MuiTableCell-root': {
+            borderColor: 'rgba(247, 90, 90, 0.2)',
+          },
+          // Make action buttons more prominent on hover
+          '& .RaEditButton-root, & .RaShowButton-root, & .RaDeleteButton-root': {
+            opacity: 1,
+            transform: 'scale(1.05)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+          },
+          '& .RaEditButton-root': {
+            backgroundColor: 'rgba(25, 118, 210, 0.1)',
+            borderColor: '#1976d2',
+          },
+          '& .RaShowButton-root': {
+            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+            borderColor: '#4caf50',
+          },
+          '& .RaDeleteButton-root': {
+            backgroundColor: 'rgba(244, 67, 54, 0.1)',
+            borderColor: '#f44336',
+          },
+        },
+      },
+      // Style action buttons for better visibility
+      '& .RaEditButton-root, & .RaShowButton-root, & .RaDeleteButton-root': {
+        opacity: 0.7,
+        transition: 'all 0.2s ease-in-out',
+        borderRadius: '8px',
+        minWidth: '36px',
+        height: '36px',
+        border: '1px solid transparent',
+        '&:hover': {
+          opacity: 1,
+          transform: 'scale(1.1)',
+        },
+      },
     }}
   >
     <Datagrid 
@@ -320,9 +363,15 @@ export const UserList = () => (
       <LanguageField />
       <TextField source="preferred_level" label="Level" sx={{ minWidth: 70 }} />
       <DateField source="created_at" label="Created" sx={{ minWidth: 120 }} />
-      <ShowButton />
-      <EditButton />
-      <CustomDeleteButton />
+      <Tooltip title="View Details" arrow>
+        <ShowButton />
+      </Tooltip>
+      <Tooltip title="Edit User" arrow>
+        <EditButton />
+      </Tooltip>
+      <Tooltip title="Delete User" arrow>
+        <CustomDeleteButton />
+      </Tooltip>
     </Datagrid>
   </List>
 );
