@@ -313,13 +313,13 @@ export const UserList = () => (
         },
       }}
     >
-      <TextField source="id" label="ID" sx={{ maxWidth: 120 }} />
-      <TextField source="name" label="Name" sx={{ minWidth: 120 }} />
-      <EmailField source="email" label="Email" sx={{ minWidth: 200 }} />
+      <TextField source="id" label="ID" sx={{ maxWidth: 100 }} />
+      <TextField source="name" label="Name" sx={{ minWidth: 100 }} />
+      <EmailField source="email" label="Email" sx={{ minWidth: 180 }} />
       <UserStatusField />
       <LanguageField />
-      <TextField source="preferred_level" label="Level" sx={{ minWidth: 80 }} />
-      <DateField source="created_at" label="Created" showTime sx={{ minWidth: 150 }} />
+      <TextField source="preferred_level" label="Level" sx={{ minWidth: 70 }} />
+      <DateField source="created_at" label="Created" sx={{ minWidth: 120 }} />
       <ShowButton />
       <EditButton />
       <CustomDeleteButton />
