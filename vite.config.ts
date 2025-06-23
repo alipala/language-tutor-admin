@@ -5,6 +5,29 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: '/_admin/',
+  build: {
+    // Force cache busting for Railway deployments
+    rollupOptions: {
+      output: {
+        // Add timestamp to chunk names to prevent caching issues
+        entryFileNames: `assets/[name]-[hash]-${Date.now()}.js`,
+        chunkFileNames: `assets/[name]-[hash]-${Date.now()}.js`,
+        assetFileNames: `assets/[name]-[hash]-${Date.now()}.[ext]`
+      }
+    },
+    // Clear output directory before build
+    emptyOutDir: true,
+    // Disable build cache in production
+    ...(process.env.NODE_ENV === 'production' && {
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true
+        }
+      }
+    })
+  },
   preview: {
     host: '0.0.0.0',
     port: parseInt(process.env.PORT || '4173'),

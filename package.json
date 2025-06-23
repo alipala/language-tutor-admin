@@ -9,8 +9,10 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint --fix --ext .js,.jsx,.ts,.tsx ./src",
     "format": "prettier --write ./src",
-    "railway:install": "npm ci --legacy-peer-deps",
-    "railway:build": "npm run build"
+    "railway:install": "rm -rf node_modules/.cache && rm -rf dist && npm ci --legacy-peer-deps --no-cache",
+    "railway:build": "rm -rf dist && npm run build",
+    "clean": "rm -rf dist && rm -rf node_modules/.cache",
+    "build:fresh": "npm run clean && npm run build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
