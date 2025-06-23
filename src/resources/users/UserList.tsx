@@ -551,25 +551,29 @@ const UserListActions = () => (
 );
 
 // Main Users list component with modern card-based design
-export const UserList = () => (
-  <List
-    actions={<UserListActions />}
-    filters={userFilters}
-    sort={{ field: 'created_at', order: 'DESC' }}
-    perPage={20}
-    sx={{
-      '& .RaList-main': {
-        backgroundColor: '#f8f9fa',
-        minHeight: '100vh',
-        p: 3,
-      },
-      '& .RaList-content': {
-        backgroundColor: 'transparent',
-        boxShadow: 'none',
-        border: 'none',
-      },
-    }}
-  >
-    <UserCardList />
-  </List>
-);
+export const UserList = () => {
+  console.log('🎨 MODERN UserList component loaded!');
+  
+  return (
+    <List
+      actions={<UserListActions />}
+      filters={userFilters}
+      sort={{ field: 'created_at', order: 'DESC' }}
+      perPage={20}
+      sx={{
+        '& .RaList-main': {
+          backgroundColor: '#f8f9fa',
+          minHeight: '100vh',
+          p: 3,
+        },
+        '& .RaList-content': {
+          backgroundColor: 'transparent',
+          boxShadow: 'none',
+          border: 'none',
+        },
+      }}
+    >
+      <UserCardList />
+    </List>
+  );
+};
