@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   List,
   Datagrid,
@@ -15,9 +15,24 @@ import {
   TextInput,
   SelectInput,
   BooleanInput,
+  useDelete,
+  useNotify,
+  useRefresh,
 } from 'react-admin';
-import { Chip, Box, Typography } from '@mui/material';
-import { Search, PersonAdd, FileDownload } from '@mui/icons-material';
+import { 
+  Chip, 
+  Box, 
+  Typography, 
+  IconButton, 
+  Dialog, 
+  DialogTitle, 
+  DialogContent, 
+  DialogActions, 
+  Button,
+  Alert,
+  AlertTitle
+} from '@mui/material';
+import { Search, PersonAdd, FileDownload, Delete, Warning } from '@mui/icons-material';
 
 // Custom component for user status
 const UserStatusField = ({ record }: { record?: any }) => {
@@ -185,6 +200,137 @@ const UserListActions = () => (
   </TopToolbar>
 );
 
+// Delete button with confirmation modal
+const DeleteUserButton = ({ record }: { record?: any }) => {
+  const [open, setOpen] = useState(false);
+  const [deleteUser, { isLoading }] = useDelete();
+  const notify = useNotify();
+  const refresh = useRefresh();
+
+  if (!record) return null;
+
+  const handleDelete = async () => {
+    try {
+      await deleteUser('users', { id: record.id });
+      notify(`User ${record.email} deleted successfully`, { type: 'success' });
+      refresh();
+      setOpen(false);
+    } catch (error) {
+      notify('Error deleting user', { type: 'error' });
+      console.error('Delete error:', error);
+    }
+  };
+
+  return (
+    <>
+      <IconButton
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen(true);
+        }}
+        size="small"
+        sx={{
+          color: '#d32f2f',
+          '&:hover': {
+            backgroundColor: 'rgba(211, 47, 47, 0.1)',
+          },
+        }}
+      >
+        <Delete fontSize="small" />
+      </IconButton>
+
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            padding: 2,
+          },
+        }}
+      >
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 2, pb: 1 }}>
+          <Warning sx={{ color: '#d32f2f', fontSize: 32 }} />
+          <Typography variant="h6" component="div">
+            Confirm User Deletion
+          </Typography>
+        </DialogTitle>
+        
+        <DialogContent>
+          <Alert severity="error" sx={{ mb: 2 }}>
+            <AlertTitle>This action cannot be undone!</AlertTitle>
+            You are about to permanently delete this user and all their associated data.
+          </Alert>
+          
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="body1" gutterBottom>
+              <strong>User Details:</strong>
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              • Name: {record.name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              • Email: {record.email}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              • ID: {record.id}
+            </Typography>
+          </Box>
+
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            <AlertTitle>Data that will be deleted:</AlertTitle>
+            <Typography variant="body2">
+              • User account and profile information<br/>
+              • All conversation sessions<br/>
+              • All learning plans and progress<br/>
+              • Any associated user statistics
+            </Typography>
+          </Alert>
+
+          <Typography variant="body2" color="text.secondary">
+            Please type the user's email address to confirm deletion:
+          </Typography>
+        </DialogContent>
+
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button
+            onClick={() => setOpen(false)}
+            variant="outlined"
+            sx={{
+              borderColor: '#666',
+              color: '#666',
+              '&:hover': {
+                borderColor: '#333',
+                backgroundColor: 'rgba(0, 0, 0, 0.04)',
+              },
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="contained"
+            disabled={isLoading}
+            sx={{
+              backgroundColor: '#d32f2f',
+              '&:hover': {
+                backgroundColor: '#b71c1c',
+              },
+              '&:disabled': {
+                backgroundColor: '#ffcdd2',
+              },
+            }}
+          >
+            {isLoading ? 'Deleting...' : 'Delete User'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+};
+
 // Main Users list component with modern styling
 export const UserList = () => (
   <List
@@ -214,6 +360,7 @@ export const UserList = () => (
       <DateField source="last_login" label="Last Login" showTime />
       <ShowButton />
       <EditButton />
+      <DeleteUserButton />
     </Datagrid>
   </List>
 );
