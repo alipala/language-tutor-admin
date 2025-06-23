@@ -18,6 +18,9 @@ import {
   useDelete,
   useNotify,
   useRefresh,
+  DeleteButton,
+  useDeleteWithConfirmController,
+  Confirm,
 } from 'react-admin';
 import { 
   Chip, 
@@ -211,83 +214,24 @@ const UserListActions = () => (
   </TopToolbar>
 );
 
-// Delete Button Component with Confirmation Modal
-const DeleteUserButton = ({ record }: { record?: any }) => {
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [deleteUser, { isLoading }] = useDelete();
-  const notify = useNotify();
-  const refresh = useRefresh();
-
+// Custom Delete Button with Enhanced Confirmation
+const CustomDeleteButton = ({ record }: { record?: any }) => {
   if (!record) return null;
 
-  const handleDelete = async () => {
-    try {
-      await deleteUser('users', { id: record.id });
-      notify(`User ${record.email} deleted successfully`, { type: 'success' });
-      refresh();
-      setDeleteModalOpen(false);
-    } catch (error) {
-      notify('Error deleting user', { type: 'error' });
-      console.error('Delete error:', error);
-    }
-  };
-
-  const handleDeleteClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setDeleteModalOpen(true);
-  };
-
   return (
-    <>
-      <Tooltip title="Delete User">
-        <IconButton
-          onClick={handleDeleteClick}
-          size="small"
-          sx={{
-            color: '#f44336',
-            '&:hover': {
-              backgroundColor: 'rgba(244, 67, 54, 0.1)',
-            },
-          }}
-        >
-          <Delete fontSize="small" />
-        </IconButton>
-      </Tooltip>
-
-      {/* Delete Confirmation Modal */}
-      <Dialog
-        open={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            borderRadius: 3,
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
-          }
-        }}
-      >
-        <DialogTitle sx={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: 2,
-          pb: 1,
-          borderBottom: '1px solid #f0f0f0'
-        }}>
-          <Warning sx={{ color: '#f44336', fontSize: 32 }} />
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
-            Confirm User Deletion
-          </Typography>
-        </DialogTitle>
-        
-        <DialogContent sx={{ pt: 3 }}>
-          <Alert severity="error" sx={{ mb: 3 }}>
+    <DeleteButton
+      record={record}
+      resource="users"
+      confirmTitle={`Delete User: ${record.name || record.email}`}
+      confirmContent={
+        <Box>
+          <Alert severity="error" sx={{ mb: 2 }}>
             <AlertTitle sx={{ fontWeight: 600 }}>This action cannot be undone!</AlertTitle>
             You are about to permanently delete this user and all their associated data.
           </Alert>
           
           <Box sx={{ 
-            mb: 3, 
+            mb: 2, 
             p: 2, 
             backgroundColor: '#f8f9fa', 
             borderRadius: 2,
@@ -307,7 +251,7 @@ const DeleteUserButton = ({ record }: { record?: any }) => {
             </Typography>
           </Box>
 
-          <Alert severity="warning" sx={{ borderRadius: 2 }}>
+          <Alert severity="warning">
             <AlertTitle sx={{ fontWeight: 600 }}>Data that will be deleted:</AlertTitle>
             <Typography variant="body2" sx={{ mt: 1 }}>
               • User account and profile information<br/>
@@ -316,47 +260,17 @@ const DeleteUserButton = ({ record }: { record?: any }) => {
               • User statistics and analytics data
             </Typography>
           </Alert>
-        </DialogContent>
-
-        <DialogActions sx={{ 
-          p: 3, 
-          pt: 2,
-          borderTop: '1px solid #f0f0f0',
-          gap: 1
-        }}>
-          <Button 
-            onClick={() => setDeleteModalOpen(false)} 
-            variant="outlined"
-            sx={{
-              borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 500,
-              minWidth: 100,
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleDelete}
-            variant="contained"
-            color="error"
-            disabled={isLoading}
-            sx={{
-              borderRadius: 2,
-              textTransform: 'none',
-              fontWeight: 600,
-              minWidth: 120,
-              boxShadow: '0 2px 8px rgba(244, 67, 54, 0.3)',
-              '&:hover': {
-                boxShadow: '0 4px 12px rgba(244, 67, 54, 0.4)',
-              },
-            }}
-          >
-            {isLoading ? 'Deleting...' : 'Delete User'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+        </Box>
+      }
+      sx={{
+        '& .MuiButton-root': {
+          color: '#f44336',
+          '&:hover': {
+            backgroundColor: 'rgba(244, 67, 54, 0.1)',
+          },
+        },
+      }}
+    />
   );
 };
 
@@ -408,7 +322,7 @@ export const UserList = () => (
       <DateField source="created_at" label="Created" showTime sx={{ minWidth: 150 }} />
       <ShowButton />
       <EditButton />
-      <DeleteUserButton />
+      <CustomDeleteButton />
     </Datagrid>
   </List>
 );
