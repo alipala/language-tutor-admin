@@ -211,9 +211,8 @@ const UserListActions = () => (
   </TopToolbar>
 );
 
-// Fast Action Items Component with hover effects
-const FastActionItems = ({ record }: { record?: any }) => {
-  const [showActions, setShowActions] = useState(false);
+// Action Buttons Component - Simplified approach
+const ActionButtons = ({ record }: { record?: any }) => {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteUser, { isLoading }] = useDelete();
   const notify = useNotify();
@@ -250,88 +249,51 @@ const FastActionItems = ({ record }: { record?: any }) => {
 
   return (
     <>
-      <Box
-        sx={{
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minWidth: 120,
-        }}
-        onMouseEnter={() => setShowActions(true)}
-        onMouseLeave={() => setShowActions(false)}
-      >
-        {/* Default state - show more icon */}
-        <Fade in={!showActions} timeout={200}>
-          <Box sx={{ display: showActions ? 'none' : 'flex' }}>
-            <Tooltip title="Hover for actions">
-              <IconButton size="small" sx={{ color: '#666' }}>
-                <MoreVert fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        </Fade>
-
-        {/* Hover state - show action buttons */}
-        <Fade in={showActions} timeout={200}>
-          <Box 
-            sx={{ 
-              display: showActions ? 'flex' : 'none',
-              gap: 0.5,
-              position: 'absolute',
-              backgroundColor: 'white',
-              borderRadius: 1,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-              padding: '4px',
-              zIndex: 10,
+      <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
+        <Tooltip title="View User">
+          <IconButton
+            onClick={handleShowUser}
+            size="small"
+            sx={{
+              color: '#2196f3',
+              '&:hover': {
+                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+              },
             }}
           >
-            <Tooltip title="View User">
-              <IconButton
-                onClick={handleShowUser}
-                size="small"
-                sx={{
-                  color: '#2196f3',
-                  '&:hover': {
-                    backgroundColor: 'rgba(33, 150, 243, 0.1)',
-                  },
-                }}
-              >
-                <Visibility fontSize="small" />
-              </IconButton>
-            </Tooltip>
+            <Visibility fontSize="small" />
+          </IconButton>
+        </Tooltip>
 
-            <Tooltip title="Edit User">
-              <IconButton
-                onClick={handleEditUser}
-                size="small"
-                sx={{
-                  color: '#ff9800',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 152, 0, 0.1)',
-                  },
-                }}
-              >
-                <Edit fontSize="small" />
-              </IconButton>
-            </Tooltip>
+        <Tooltip title="Edit User">
+          <IconButton
+            onClick={handleEditUser}
+            size="small"
+            sx={{
+              color: '#ff9800',
+              '&:hover': {
+                backgroundColor: 'rgba(255, 152, 0, 0.1)',
+              },
+            }}
+          >
+            <Edit fontSize="small" />
+          </IconButton>
+        </Tooltip>
 
-            <Tooltip title="Delete User">
-              <IconButton
-                onClick={handleDeleteClick}
-                size="small"
-                sx={{
-                  color: '#f44336',
-                  '&:hover': {
-                    backgroundColor: 'rgba(244, 67, 54, 0.1)',
-                  },
-                }}
-              >
-                <Delete fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        </Fade>
+        <Tooltip title="Delete User">
+          <IconButton
+            onClick={handleDeleteClick}
+            size="small"
+            sx={{
+              color: '#f44336',
+              '&:hover': {
+                backgroundColor: 'rgba(244, 67, 54, 0.1)',
+              },
+            }}
+          >
+            <Delete fontSize="small" />
+          </IconButton>
+        </Tooltip>
       </Box>
 
       {/* Delete Confirmation Modal */}
@@ -486,7 +448,7 @@ export const UserList = () => (
       <LanguageField />
       <TextField source="preferred_level" label="Level" sx={{ minWidth: 80 }} />
       <DateField source="created_at" label="Created" showTime sx={{ minWidth: 150 }} />
-      <FastActionItems />
+      <ActionButtons />
     </Datagrid>
   </List>
 );
