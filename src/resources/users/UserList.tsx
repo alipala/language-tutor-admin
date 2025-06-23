@@ -456,16 +456,36 @@ export const UserList = () => (
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
         border: '1px solid rgba(0, 0, 0, 0.05)',
       },
+      '& .RaDatagrid-table': {
+        minWidth: '100%',
+      },
+      '& .RaDatagrid-headerCell': {
+        fontWeight: 600,
+        backgroundColor: '#f8f9fa',
+        borderBottom: '2px solid #e9ecef',
+      },
+      '& .RaDatagrid-rowCell': {
+        borderBottom: '1px solid #f0f0f0',
+        padding: '12px 8px',
+      },
     }}
   >
-    <Datagrid rowClick="show" bulkActionButtons={false}>
-      <TextField source="id" label="ID" />
-      <TextField source="name" label="Name" />
-      <EmailField source="email" label="Email" />
+    <Datagrid 
+      rowClick="show" 
+      bulkActionButtons={false}
+      sx={{
+        '& .MuiTableContainer-root': {
+          overflowX: 'auto',
+        },
+      }}
+    >
+      <TextField source="id" label="ID" sx={{ maxWidth: 120 }} />
+      <TextField source="name" label="Name" sx={{ minWidth: 120 }} />
+      <EmailField source="email" label="Email" sx={{ minWidth: 200 }} />
       <UserStatusField />
       <LanguageField />
-      <TextField source="preferred_level" label="Level" />
-      <DateField source="created_at" label="Created" showTime />
+      <TextField source="preferred_level" label="Level" sx={{ minWidth: 80 }} />
+      <DateField source="created_at" label="Created" showTime sx={{ minWidth: 150 }} />
       <FastActionItems />
     </Datagrid>
   </List>
