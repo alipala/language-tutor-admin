@@ -386,14 +386,15 @@ export const UserEdit = () => (
     <SimpleForm>
       <TextInput source="name" label="Full Name" required />
       <TextInput source="email" label="Email Address" type="email" disabled />
-      <BooleanInput source="is_active" label="Active" />
-      <BooleanInput source="is_verified" label="Verified" />
       
-      {/* TEST: Move Delete button BEFORE SelectInputs */}
-      <div style={{ backgroundColor: 'blue', color: 'white', padding: '10px', margin: '10px' }}>
-        DEBUG: Delete button BEFORE SelectInputs
+      {/* SOLUTION: Move Delete button RIGHT AFTER TextInputs */}
+      <div style={{ backgroundColor: 'orange', color: 'white', padding: '10px', margin: '10px' }}>
+        SUCCESS: Delete button AFTER TextInputs (SHOULD WORK!)
       </div>
       <DeleteUserWithConfirmation />
+      
+      <BooleanInput source="is_active" label="Active" />
+      <BooleanInput source="is_verified" label="Verified" />
       
       <SelectInput
         source="preferred_language"
