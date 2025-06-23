@@ -402,7 +402,20 @@ export const UserEdit = () => (
       />
       
       {/* Custom Delete Button with Confirmation */}
+      <div style={{ backgroundColor: 'red', color: 'white', padding: '10px', margin: '10px' }}>
+        DEBUG: DeleteUserWithConfirmation should render here
+      </div>
       <DeleteUserWithConfirmation />
+      
+      {/* Simple fallback button for testing */}
+      <Button
+        variant="contained"
+        color="error"
+        sx={{ mt: 2 }}
+        onClick={() => alert('Simple Delete Button Works!')}
+      >
+        SIMPLE DELETE BUTTON (FALLBACK)
+      </Button>
     </SimpleForm>
   </Edit>
 );
