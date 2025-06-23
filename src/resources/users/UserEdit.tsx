@@ -388,6 +388,13 @@ export const UserEdit = () => (
       <TextInput source="email" label="Email Address" type="email" disabled />
       <BooleanInput source="is_active" label="Active" />
       <BooleanInput source="is_verified" label="Verified" />
+      
+      {/* TEST: Move Delete button BEFORE SelectInputs */}
+      <div style={{ backgroundColor: 'blue', color: 'white', padding: '10px', margin: '10px' }}>
+        DEBUG: Delete button BEFORE SelectInputs
+      </div>
+      <DeleteUserWithConfirmation />
+      
       <SelectInput
         source="preferred_language"
         label="Preferred Language"
@@ -401,11 +408,10 @@ export const UserEdit = () => (
         emptyText="No level selected"
       />
       
-      {/* Custom Delete Button with Confirmation */}
-      <div style={{ backgroundColor: 'red', color: 'white', padding: '10px', margin: '10px' }}>
-        DEBUG: DeleteUserWithConfirmation should render here
+      {/* TEST: Move debug elements higher to see where form cuts off */}
+      <div style={{ backgroundColor: 'green', color: 'white', padding: '10px', margin: '10px' }}>
+        DEBUG: This should appear AFTER SelectInputs
       </div>
-      <DeleteUserWithConfirmation />
       
       {/* Simple fallback button for testing */}
       <Button
