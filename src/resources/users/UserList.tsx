@@ -554,6 +554,12 @@ const UserListActions = () => (
 export const UserList = () => {
   console.log('🎨 MODERN UserList component loaded!');
   
+  // Add a visible indicator that this component is being used
+  React.useEffect(() => {
+    document.title = 'Modern Users - Language Tutor Admin';
+    console.log('🚀 MODERN CARD LAYOUT ACTIVE!');
+  }, []);
+  
   return (
     <List
       actions={<UserListActions />}
