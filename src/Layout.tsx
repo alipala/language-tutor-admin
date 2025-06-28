@@ -366,25 +366,20 @@ const CustomAppBar = () => {
   return (
     <AppBar>
       <TitlePortal />
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
-          {darkMode ? 'Dark' : 'Light'} Mode
-        </Typography>
-        <IconButton
-          onClick={toggleDarkMode}
-          sx={{
-            color: 'text.primary',
-            backgroundColor: 'rgba(247, 90, 90, 0.1)',
-            '&:hover': {
-              backgroundColor: 'rgba(247, 90, 90, 0.2)',
-              transform: 'scale(1.1)',
-            },
-            transition: 'all 0.2s ease-in-out',
-          }}
-        >
-          {darkMode ? <Brightness7 /> : <Brightness4 />}
-        </IconButton>
-      </Box>
+      <IconButton
+        onClick={toggleDarkMode}
+        sx={{
+          color: 'text.primary',
+          backgroundColor: 'rgba(247, 90, 90, 0.1)',
+          '&:hover': {
+            backgroundColor: 'rgba(247, 90, 90, 0.2)',
+            transform: 'scale(1.1)',
+          },
+          transition: 'all 0.2s ease-in-out',
+        }}
+      >
+        {darkMode ? <Brightness7 /> : <Brightness4 />}
+      </IconButton>
     </AppBar>
   );
 };

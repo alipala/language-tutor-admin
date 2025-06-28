@@ -69,15 +69,8 @@ const UserProfileHeader = () => {
 
   return (
     <Card sx={{ mb: 3, overflow: 'visible' }}>
-      <Box
-        sx={{
-          background: 'linear-gradient(135deg, #F75A5A 0%, #e54545 100%)',
-          height: 80,
-          position: 'relative',
-        }}
-      />
-      <CardContent sx={{ pt: 0, pb: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', mt: -4, mb: 2 }}>
+      <CardContent sx={{ pt: 3, pb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
           <Avatar
             sx={{
               width: 80,
@@ -85,14 +78,13 @@ const UserProfileHeader = () => {
               backgroundColor: getStatusColor(),
               fontSize: '1.5rem',
               fontWeight: 600,
-              border: '4px solid white',
               boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
               flexShrink: 0,
             }}
           >
             {getInitials(record.name)}
           </Avatar>
-          <Box sx={{ ml: 3, flex: 1, mt: 2 }}>
+          <Box sx={{ ml: 3, flex: 1 }}>
             <Typography variant="h4" sx={{ fontWeight: 600, color: '#333', mb: 2 }}>
               {record.name || 'Unnamed User'}
             </Typography>
@@ -297,7 +289,7 @@ const SubscriptionDetailsSection = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Schedule sx={{ fontSize: 16, color: '#666' }} />
                   <Typography variant="body1">
-                    {formatDate(record.subscription_started_at)}
+                    {formatDate(record.current_period_start)}
                   </Typography>
                 </Box>
               </Box>
@@ -309,7 +301,7 @@ const SubscriptionDetailsSection = () => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Schedule sx={{ fontSize: 16, color: '#666' }} />
                   <Typography variant="body1">
-                    {formatDate(record.subscription_expires_at)}
+                    {formatDate(record.current_period_end)}
                   </Typography>
                 </Box>
               </Box>
