@@ -72,30 +72,37 @@ const UserProfileHeader = () => {
       <Box
         sx={{
           background: 'linear-gradient(135deg, #F75A5A 0%, #e54545 100%)',
-          height: 120,
+          height: 80,
           position: 'relative',
         }}
       />
       <CardContent sx={{ pt: 0, pb: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', mt: -6, mb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', mt: -4, mb: 2 }}>
           <Avatar
             sx={{
-              width: 100,
-              height: 100,
+              width: 80,
+              height: 80,
               backgroundColor: getStatusColor(),
-              fontSize: '2rem',
+              fontSize: '1.5rem',
               fontWeight: 600,
               border: '4px solid white',
               boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+              flexShrink: 0,
             }}
           >
             {getInitials(record.name)}
           </Avatar>
-          <Box sx={{ ml: 3, flex: 1 }}>
-            <Typography variant="h4" sx={{ fontWeight: 600, color: '#333', mb: 1 }}>
+          <Box sx={{ ml: 3, flex: 1, mt: 2 }}>
+            <Typography variant="h4" sx={{ fontWeight: 600, color: '#333', mb: 2 }}>
               {record.name || 'Unnamed User'}
             </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+              <Email sx={{ fontSize: 18, color: '#666' }} />
+              <Typography variant="body1" sx={{ color: '#666' }}>
+                {record.email}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
               <Chip
                 label={getStatusLabel()}
                 sx={{
@@ -114,12 +121,6 @@ const UserProfileHeader = () => {
                   size="small"
                 />
               )}
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Email sx={{ fontSize: 18, color: '#666' }} />
-              <Typography variant="body1" sx={{ color: '#666' }}>
-                {record.email}
-              </Typography>
             </Box>
           </Box>
         </Box>
