@@ -550,7 +550,7 @@ const UserListActions = () => (
   </TopToolbar>
 );
 
-// Main Users list component with modern card-based design
+// SIMPLE TEST VERSION - Main Users list component
 export const UserList = () => {
   console.log('🎨 MODERN UserList component loaded!');
   
@@ -563,25 +563,21 @@ export const UserList = () => {
   }, []);
   
   return (
-    <List
-      actions={<UserListActions />}
-      filters={userFilters}
-      sort={{ field: 'created_at', order: 'DESC' }}
-      perPage={20}
-      sx={{
-        '& .RaList-main': {
-          backgroundColor: '#f8f9fa',
-          minHeight: '100vh',
-          p: 3,
-        },
-        '& .RaList-content': {
-          backgroundColor: 'transparent',
-          boxShadow: 'none',
-          border: 'none',
-        },
-      }}
-    >
-      <UserCardList />
-    </List>
+    <Box sx={{ p: 4, backgroundColor: '#ff0000', color: 'white', textAlign: 'center' }}>
+      <Typography variant="h3" sx={{ mb: 2 }}>
+        🎉 MODERN USERLIST IS WORKING! 🎉
+      </Typography>
+      <Typography variant="h5">
+        This red box proves our custom component is loading!
+      </Typography>
+      <List
+        sort={{ field: 'created_at', order: 'DESC' }}
+        perPage={20}
+      >
+        <Box sx={{ p: 2, backgroundColor: 'white', color: 'black', borderRadius: 2 }}>
+          <Typography>Default List Content</Typography>
+        </Box>
+      </List>
+    </Box>
   );
 };
