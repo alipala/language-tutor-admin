@@ -558,6 +558,8 @@ export const UserList = () => {
   React.useEffect(() => {
     document.title = 'Modern Users - Language Tutor Admin';
     console.log('🚀 MODERN CARD LAYOUT ACTIVE!');
+    // Add an alert to make it super obvious
+    alert('🎉 MODERN UserList component is now active!');
   }, []);
   
   return (
