@@ -24,7 +24,7 @@ export const App = () => (
     authProvider={authProvider}
     dataProvider={dataProvider}
     dashboard={Dashboard}
-    title="Language Tutor Admin"
+    title="My Taco AI Admin Panel"
   >
     <Resource
       name="users"

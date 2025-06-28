@@ -11,12 +11,7 @@ import {
   useRefresh,
   TextInput,
   SelectInput,
-  Datagrid,
-  TextField,
-  EmailField,
-  DateField,
-  BooleanField,
-  ChipField
+  FunctionField
 } from 'react-admin';
 import { 
   Box, 
@@ -42,7 +37,16 @@ import {
   Paper,
   ToggleButton,
   ToggleButtonGroup,
-  Tooltip
+  Tooltip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Checkbox,
+  LinearProgress,
+  useTheme
 } from '@mui/material';
 import { 
   Person, 
@@ -64,7 +68,11 @@ import {
   Warning,
   ViewList,
   ViewModule,
-  FilterList
+  FilterList,
+  Check,
+  Close,
+  AccountCircle,
+  Business,
 } from '@mui/icons-material';
 
 // Enhanced User Card Component with Subscription Details
@@ -72,6 +80,7 @@ const UserCard = ({ record }: { record: any }) => {
   const redirect = useRedirect();
   const notify = useNotify();
   const refresh = useRefresh();
+  const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [deleteModalOpen, setDeleteModalOpen] = React.useState(false);
 
@@ -86,7 +95,6 @@ const UserCard = ({ record }: { record: any }) => {
 
   const handleDelete = async () => {
     try {
-      // This would typically use the dataProvider
       notify(`User ${record.email} deletion initiated`, { type: 'info' });
       setDeleteModalOpen(false);
       handleMenuClose();
@@ -120,7 +128,7 @@ const UserCard = ({ record }: { record: any }) => {
       case 'canceled': return '#f44336';
       case 'past_due': return '#ff5722';
       case 'expired': return '#9e9e9e';
-      default: return '#2196f3'; // try_learn (free)
+      default: return '#2196f3';
     }
   };
 
@@ -137,7 +145,7 @@ const UserCard = ({ record }: { record: any }) => {
 
   const getPlanDisplayName = (plan?: string) => {
     switch (plan) {
-      case 'try_learn': return 'Try & Learn (Free)';
+      case 'try_learn': return 'Try & Learn';
       case 'fluency_builder': return 'Fluency Builder';
       case 'team_mastery': return 'Team Mastery';
       default: return 'Free Tier';
@@ -164,14 +172,14 @@ const UserCard = ({ record }: { record: any }) => {
             transform: 'translateY(-2px)',
             boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
           },
-          borderRadius: '12px', // rounded-xl equivalent
+          borderRadius: '12px',
           overflow: 'visible',
-          border: '2px solid #e5e7eb'
+          border: '2px solid',
+          borderColor: 'divider'
         }}
         onClick={() => redirect(`/users/${record.id}/show`)}
       >
         <CardContent sx={{ p: 3 }}>
-          {/* Header Section */}
           <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Avatar
@@ -187,7 +195,7 @@ const UserCard = ({ record }: { record: any }) => {
                 {getInitials(record.name)}
               </Avatar>
               <Box>
-                <Typography variant="h6" sx={{ fontWeight: 600, color: '#333', mb: 0.5 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
                   {record.name || 'Unnamed User'}
                 </Typography>
                 <Chip
@@ -197,17 +205,14 @@ const UserCard = ({ record }: { record: any }) => {
                     color: 'white',
                     fontWeight: 500,
                     fontSize: '0.75rem',
-                    borderRadius: '6px' // Less rounded
+                    borderRadius: '6px'
                   }}
                 />
               </Box>
             </Box>
             <IconButton
               onClick={handleMenuClick}
-              sx={{
-                color: '#666',
-                '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' }
-              }}
+              sx={{ color: 'text.secondary' }}
             >
               <MoreVert />
             </IconButton>
@@ -215,18 +220,17 @@ const UserCard = ({ record }: { record: any }) => {
 
           <Divider sx={{ my: 2 }} />
 
-          {/* User Details */}
           <Stack spacing={1.5}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Email sx={{ fontSize: 16, color: '#666' }} />
-              <Typography variant="body2" sx={{ color: '#666', fontSize: '0.875rem' }}>
+              <Email sx={{ fontSize: 16, color: 'text.secondary' }} />
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
                 {record.email}
               </Typography>
             </Box>
 
             {record.preferred_language && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Language sx={{ fontSize: 16, color: '#666' }} />
+                <Language sx={{ fontSize: 16, color: 'text.secondary' }} />
                 <Chip
                   label={record.preferred_language.toUpperCase()}
                   color="primary"
@@ -247,19 +251,18 @@ const UserCard = ({ record }: { record: any }) => {
             )}
 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CalendarToday sx={{ fontSize: 16, color: '#666' }} />
-              <Typography variant="body2" sx={{ color: '#666', fontSize: '0.875rem' }}>
+              <CalendarToday sx={{ fontSize: 16, color: 'text.secondary' }} />
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
                 Joined {formatDate(record.created_at)}
               </Typography>
             </Box>
           </Stack>
 
-          {/* Subscription Section */}
           <Divider sx={{ my: 2 }} />
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <CreditCard sx={{ fontSize: 16, color: '#666' }} />
-              <Typography variant="body2" sx={{ fontWeight: 600, color: '#333' }}>
+              <CreditCard sx={{ fontSize: 16, color: 'text.secondary' }} />
+              <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
                 Subscription
               </Typography>
             </Box>
@@ -277,7 +280,7 @@ const UserCard = ({ record }: { record: any }) => {
 
           <Stack spacing={1}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <Typography variant="body2" sx={{ color: '#666', fontSize: '0.875rem' }}>
+              <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
                 Plan:
               </Typography>
               <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
@@ -287,41 +290,20 @@ const UserCard = ({ record }: { record: any }) => {
 
             {record.subscription_expires_at && (
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Typography variant="body2" sx={{ color: '#666', fontSize: '0.875rem' }}>
+                <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
                   Expires:
                 </Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Schedule sx={{ fontSize: 14, color: '#666' }} />
+                  <Schedule sx={{ fontSize: 14, color: 'text.secondary' }} />
                   <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
                     {formatDate(record.subscription_expires_at)}
                   </Typography>
                 </Box>
               </Box>
             )}
-
-            {record.stripe_customer_id && (
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Typography variant="body2" sx={{ color: '#666', fontSize: '0.875rem' }}>
-                  Stripe ID:
-                </Typography>
-                <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '0.75rem', color: '#666' }}>
-                  {record.stripe_customer_id.slice(-8)}...
-                </Typography>
-              </Box>
-            )}
-
-            {record.learning_plan_preserved && (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1, p: 1, backgroundColor: '#fff3e0', borderRadius: '6px' }}>
-                <Star sx={{ fontSize: 16, color: '#ff9800' }} />
-                <Typography variant="body2" sx={{ color: '#e65100', fontSize: '0.75rem', fontWeight: 500 }}>
-                  Learning Plan Preserved
-                </Typography>
-              </Box>
-            )}
           </Stack>
 
-          {/* Action Buttons */}
-          <Box sx={{ display: 'flex', gap: 1, mt: 3, pt: 2, borderTop: '1px solid #f0f0f0' }}>
+          <Box sx={{ display: 'flex', gap: 1, mt: 3, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
             <Button
               size="small"
               startIcon={<Visibility />}
@@ -333,12 +315,9 @@ const UserCard = ({ record }: { record: any }) => {
                 textTransform: 'none',
                 borderRadius: '8px',
                 fontWeight: 500,
-                color: '#666',
-                border: '1px solid #ddd',
-                '&:hover': {
-                  backgroundColor: '#f5f5f5',
-                  borderColor: '#bbb',
-                },
+                color: 'text.secondary',
+                border: '1px solid',
+                borderColor: 'divider',
               }}
               variant="outlined"
             >
@@ -355,12 +334,9 @@ const UserCard = ({ record }: { record: any }) => {
                 textTransform: 'none',
                 borderRadius: '8px',
                 fontWeight: 500,
-                color: '#666',
-                border: '1px solid #ddd',
-                '&:hover': {
-                  backgroundColor: '#f5f5f5',
-                  borderColor: '#bbb',
-                },
+                color: 'text.secondary',
+                border: '1px solid',
+                borderColor: 'divider',
               }}
               variant="outlined"
             >
@@ -370,7 +346,6 @@ const UserCard = ({ record }: { record: any }) => {
         </CardContent>
       </Card>
 
-      {/* Context Menu */}
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -399,7 +374,6 @@ const UserCard = ({ record }: { record: any }) => {
         </MenuItem>
       </Menu>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog 
         open={deleteModalOpen} 
         onClose={() => setDeleteModalOpen(false)}
@@ -412,14 +386,14 @@ const UserCard = ({ record }: { record: any }) => {
             flexDirection: 'column',
             gap: 2,
             p: 2,
-            backgroundColor: '#fff3e0',
+            backgroundColor: 'warning.light',
             borderRadius: '8px',
             mb: 2
           }}>
             <Typography variant="body1" gutterBottom sx={{ fontWeight: 600 }}>
               Are you sure you want to delete this user?
             </Typography>
-            <Typography variant="body2" sx={{ color: '#666' }}>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
               This action cannot be undone. All user data will be permanently removed.
             </Typography>
           </Box>
@@ -447,9 +421,220 @@ const UserCard = ({ record }: { record: any }) => {
   );
 };
 
+// Modern Immersive List Row Component
+const ModernUserRow = ({ record, selected, onSelect }: { record: any, selected: boolean, onSelect: (id: string) => void }) => {
+  const redirect = useRedirect();
+  const theme = useTheme();
+
+  const getStatusColor = () => {
+    if (!record.is_active) return '#f44336';
+    if (!record.is_verified) return '#ff9800';
+    return '#4caf50';
+  };
+
+  const getSubscriptionStatusColor = (status?: string) => {
+    switch (status) {
+      case 'active': return '#4caf50';
+      case 'canceling': return '#ff9800';
+      case 'canceled': return '#f44336';
+      case 'past_due': return '#ff5722';
+      case 'expired': return '#9e9e9e';
+      default: return '#2196f3';
+    }
+  };
+
+  const getSubscriptionStatusLabel = (status?: string) => {
+    switch (status) {
+      case 'active': return 'Active';
+      case 'canceling': return 'Canceling';
+      case 'canceled': return 'Canceled';
+      case 'past_due': return 'Past Due';
+      case 'expired': return 'Expired';
+      default: return 'Free Tier';
+    }
+  };
+
+  const getPlanDisplayName = (plan?: string) => {
+    switch (plan) {
+      case 'try_learn': return 'Try & Learn';
+      case 'fluency_builder': return 'Fluency Builder';
+      case 'team_mastery': return 'Team Mastery';
+      default: return 'Free Tier';
+    }
+  };
+
+  const getInitials = (name: string) => {
+    if (!name) return '?';
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return 'Not set';
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  };
+
+  return (
+    <TableRow
+      hover
+      selected={selected}
+      onClick={() => redirect(`/users/${record.id}/show`)}
+      sx={{
+        cursor: 'pointer',
+        transition: 'all 0.2s ease-in-out',
+        '&:hover': {
+          backgroundColor: 'rgba(247, 90, 90, 0.04)',
+          transform: 'scale(1.005)',
+        },
+        '&.Mui-selected': {
+          backgroundColor: 'rgba(247, 90, 90, 0.08)',
+        },
+        height: '80px',
+      }}
+    >
+      <TableCell padding="checkbox">
+        <Checkbox
+          checked={selected}
+          onChange={() => onSelect(record.id)}
+          onClick={(e) => e.stopPropagation()}
+          sx={{
+            color: '#F75A5A',
+            '&.Mui-checked': {
+              color: '#F75A5A',
+            },
+          }}
+        />
+      </TableCell>
+      
+      <TableCell>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Avatar
+            sx={{
+              width: 48,
+              height: 48,
+              backgroundColor: getStatusColor(),
+              fontSize: '1rem',
+              fontWeight: 600,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            }}
+          >
+            {getInitials(record.name)}
+          </Avatar>
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary', mb: 0.5 }}>
+              {record.name || 'Unnamed User'}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
+              {record.email}
+            </Typography>
+          </Box>
+        </Box>
+      </TableCell>
+
+      <TableCell>
+        <Chip
+          label={getSubscriptionStatusLabel(record.subscription_status)}
+          sx={{
+            backgroundColor: getSubscriptionStatusColor(record.subscription_status),
+            color: 'white',
+            fontWeight: 500,
+            fontSize: '0.75rem',
+            borderRadius: '6px',
+            minWidth: '80px',
+          }}
+        />
+      </TableCell>
+
+      <TableCell>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {record.subscription_plan === 'try_learn' && <MonetizationOn sx={{ fontSize: 16, color: '#2196f3' }} />}
+          {record.subscription_plan === 'fluency_builder' && <AccountCircle sx={{ fontSize: 16, color: '#4caf50' }} />}
+          {record.subscription_plan === 'team_mastery' && <Business sx={{ fontSize: 16, color: '#ff9800' }} />}
+          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            {getPlanDisplayName(record.subscription_plan)}
+          </Typography>
+        </Box>
+      </TableCell>
+
+      <TableCell>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {record.is_active ? (
+            <Check sx={{ fontSize: 16, color: '#4caf50' }} />
+          ) : (
+            <Close sx={{ fontSize: 16, color: '#f44336' }} />
+          )}
+          <Typography variant="body2" sx={{ color: record.is_active ? '#4caf50' : '#f44336' }}>
+            {record.is_active ? 'Active' : 'Inactive'}
+          </Typography>
+        </Box>
+      </TableCell>
+
+      <TableCell>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {record.is_verified ? (
+            <CheckCircle sx={{ fontSize: 16, color: '#4caf50' }} />
+          ) : (
+            <Warning sx={{ fontSize: 16, color: '#ff9800' }} />
+          )}
+          <Typography variant="body2" sx={{ color: record.is_verified ? '#4caf50' : '#ff9800' }}>
+            {record.is_verified ? 'Verified' : 'Unverified'}
+          </Typography>
+        </Box>
+      </TableCell>
+
+      <TableCell>
+        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+          {formatDate(record.created_at)}
+        </Typography>
+      </TableCell>
+
+      <TableCell>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              redirect(`/users/${record.id}/show`);
+            }}
+            sx={{
+              color: 'text.secondary',
+              '&:hover': {
+                backgroundColor: 'rgba(247, 90, 90, 0.1)',
+                color: '#F75A5A',
+              },
+            }}
+          >
+            <Visibility fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              redirect(`/users/${record.id}`);
+            }}
+            sx={{
+              color: 'text.secondary',
+              '&:hover': {
+                backgroundColor: 'rgba(247, 90, 90, 0.1)',
+                color: '#F75A5A',
+              },
+            }}
+          >
+            <Edit fontSize="small" />
+          </IconButton>
+        </Box>
+      </TableCell>
+    </TableRow>
+  );
+};
+
 // Loading State Component
 const LoadingState = () => (
-  <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 4 }}>
+    <LinearProgress sx={{ width: '100%', mb: 2, borderRadius: '4px' }} />
     <Typography>Loading users...</Typography>
   </Box>
 );
@@ -458,10 +643,10 @@ const LoadingState = () => (
 const EmptyState = () => (
   <Paper sx={{ p: 4, textAlign: 'center', borderRadius: '12px' }}>
     <Person sx={{ fontSize: 48, color: '#ccc', mb: 2 }} />
-    <Typography variant="h6" sx={{ color: '#666', mb: 1 }}>
+    <Typography variant="h6" sx={{ color: 'text.secondary', mb: 1 }}>
       No users found
     </Typography>
-    <Typography variant="body2" sx={{ color: '#999' }}>
+    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
       Users will appear here once they sign up for the platform.
     </Typography>
   </Paper>
@@ -477,8 +662,9 @@ const ViewToggle = ({ view, onViewChange }: { view: 'list' | 'grid', onViewChang
     sx={{
       '& .MuiToggleButton-root': {
         borderRadius: '8px',
-        border: '1px solid #ddd',
-        color: '#666',
+        border: '1px solid',
+        borderColor: 'divider',
+        color: 'text.secondary',
         '&.Mui-selected': {
           backgroundColor: '#F75A5A',
           color: 'white',
@@ -487,7 +673,7 @@ const ViewToggle = ({ view, onViewChange }: { view: 'list' | 'grid', onViewChang
           },
         },
         '&:hover': {
-          backgroundColor: '#f5f5f5',
+          backgroundColor: 'action.hover',
         },
       },
     }}
@@ -507,7 +693,7 @@ const ViewToggle = ({ view, onViewChange }: { view: 'list' | 'grid', onViewChang
 
 // Grid Layout Component
 const UserGridLayout = () => {
-  const { data, isLoading, total } = useListContext();
+  const { data, isLoading } = useListContext();
 
   if (isLoading) return <LoadingState />;
   if (!data || data.length === 0) return <EmptyState />;
@@ -538,45 +724,78 @@ const UserGridLayout = () => {
   );
 };
 
-// List Layout Component (Default)
+// Modern List Layout Component (Default)
 const UserListLayout = () => {
   const { data, isLoading } = useListContext();
+  const [selected, setSelected] = React.useState<string[]>([]);
 
   if (isLoading) return <LoadingState />;
   if (!data || data.length === 0) return <EmptyState />;
 
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setSelected(data.map((record: any) => record.id));
+    } else {
+      setSelected([]);
+    }
+  };
+
+  const handleSelect = (id: string) => {
+    setSelected(prev => 
+      prev.includes(id) 
+        ? prev.filter(selectedId => selectedId !== id)
+        : [...prev, id]
+    );
+  };
+
+  const isSelected = (id: string) => selected.includes(id);
+  const numSelected = selected.length;
+  const rowCount = data.length;
+
   return (
-    <Datagrid
-      rowClick="show"
-      sx={{
-        '& .RaDatagrid-table': {
-          backgroundColor: 'white',
-        },
-        '& .RaDatagrid-headerCell': {
-          fontWeight: 600,
-          backgroundColor: '#f8f9fa',
-        },
-        '& .MuiTableCell-root': {
-          borderBottom: '1px solid #e5e7eb',
-        },
-      }}
-    >
-      <TextField source="name" label="Name" />
-      <EmailField source="email" label="Email" />
-      <ChipField 
-        source="subscription_status" 
-        label="Subscription" 
-        sx={{
-          '& .MuiChip-root': {
-            borderRadius: '6px',
-          },
-        }}
-      />
-      <TextField source="subscription_plan" label="Plan" />
-      <BooleanField source="is_active" label="Active" />
-      <BooleanField source="is_verified" label="Verified" />
-      <DateField source="created_at" label="Joined" />
-    </Datagrid>
+    <Paper sx={{ borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ backgroundColor: 'background.default' }}>
+              <TableCell padding="checkbox">
+                <Checkbox
+                  indeterminate={numSelected > 0 && numSelected < rowCount}
+                  checked={rowCount > 0 && numSelected === rowCount}
+                  onChange={handleSelectAll}
+                  sx={{
+                    color: '#F75A5A',
+                    '&.Mui-checked': {
+                      color: '#F75A5A',
+                    },
+                    '&.MuiCheckbox-indeterminate': {
+                      color: '#F75A5A',
+                    },
+                  }}
+                />
+              </TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: '0.95rem' }}>User</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: '0.95rem' }}>Subscription</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: '0.95rem' }}>Plan</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: '0.95rem' }}>Active</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: '0.95rem' }}>Verified</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: '0.95rem' }}>Joined</TableCell>
+              <TableCell sx={{ fontWeight: 600, fontSize: '0.95rem' }}>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((record: any) => (
+              <ModernUserRow
+                key={record.id}
+                record={record}
+                selected={isSelected(record.id)}
+                onSelect={handleSelect}
+              />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
   );
 };
 
@@ -607,7 +826,7 @@ const userFilters = [
     alwaysOn
     sx={{
       '& .MuiOutlinedInput-root': {
-        borderRadius: '8px', // Less rounded
+        borderRadius: '8px',
       },
     }}
   />,
@@ -640,17 +859,30 @@ const userFilters = [
     }}
   />,
   <SelectInput
-    key="language"
-    source="preferred_language"
-    label="Language"
+    key="subscription"
+    source="subscription_status"
+    label="Subscription Status"
     choices={[
-      { id: 'english', name: 'English' },
-      { id: 'dutch', name: 'Dutch' },
-      { id: 'spanish', name: 'Spanish' },
-      { id: 'french', name: 'French' },
-      { id: 'german', name: 'German' },
-      { id: 'italian', name: 'Italian' },
-      { id: 'portuguese', name: 'Portuguese' },
+      { id: 'active', name: 'Active' },
+      { id: 'canceling', name: 'Canceling' },
+      { id: 'canceled', name: 'Canceled' },
+      { id: 'past_due', name: 'Past Due' },
+      { id: 'expired', name: 'Expired' },
+    ]}
+    sx={{
+      '& .MuiOutlinedInput-root': {
+        borderRadius: '8px',
+      },
+    }}
+  />,
+  <SelectInput
+    key="plan"
+    source="subscription_plan"
+    label="Subscription Plan"
+    choices={[
+      { id: 'try_learn', name: 'Try & Learn' },
+      { id: 'fluency_builder', name: 'Fluency Builder' },
+      { id: 'team_mastery', name: 'Team Mastery' },
     ]}
     sx={{
       '& .MuiOutlinedInput-root': {
@@ -669,17 +901,18 @@ const UserListToolbar = () => (
       flexWrap: 'nowrap',
       gap: 2,
       '& .MuiButton-root': {
-        borderRadius: '8px', // Less rounded like main page
+        borderRadius: '8px',
         textTransform: 'none',
         fontWeight: 600,
         minHeight: '40px',
         '&.RaFilterButton-root': {
-          backgroundColor: 'white',
-          color: '#666',
-          border: '2px solid #e5e7eb',
+          backgroundColor: 'background.paper',
+          color: 'text.secondary',
+          border: '2px solid',
+          borderColor: 'divider',
           '&:hover': {
-            backgroundColor: '#f5f5f5',
-            borderColor: '#bbb',
+            backgroundColor: 'action.hover',
+            borderColor: 'text.secondary',
           },
         },
         '&.RaCreateButton-root': {
@@ -716,7 +949,7 @@ const UserListToolbar = () => (
 
 // Main UserList Component
 export const UserList = () => {
-  console.log('🎨 Enhanced UserList component loaded with list/grid toggle and improved design!');
+  console.log('🎨 Modern UserList component loaded with immersive design and subscription details!');
   
   return (
     <List
@@ -726,7 +959,7 @@ export const UserList = () => {
       actions={<UserListToolbar />}
       sx={{
         '& .RaList-main': {
-          backgroundColor: '#f8f9fa',
+          backgroundColor: 'background.default',
         },
         '& .RaList-content': {
           backgroundColor: 'transparent',

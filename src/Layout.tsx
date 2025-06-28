@@ -1,11 +1,22 @@
 import type { ReactNode } from "react";
-import { Layout as RALayout, CheckForApplicationUpdate } from "react-admin";
+import { Layout as RALayout, CheckForApplicationUpdate, AppBar, TitlePortal } from "react-admin";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material';
+import { CssBaseline, IconButton, Box, Typography } from '@mui/material';
+import { Brightness4, Brightness7 } from '@mui/icons-material';
+import { useState, createContext, useContext } from 'react';
 
-// Modern coral theme
-const coralTheme = createTheme({
+// Dark Mode Context
+const DarkModeContext = createContext({
+  darkMode: false,
+  toggleDarkMode: () => {},
+});
+
+export const useDarkMode = () => useContext(DarkModeContext);
+
+// Create themes
+const createAppTheme = (darkMode: boolean) => createTheme({
   palette: {
+    mode: darkMode ? 'dark' : 'light',
     primary: {
       main: '#F75A5A',
       light: '#ff8a80',
@@ -19,12 +30,12 @@ const coralTheme = createTheme({
       contrastText: '#ffffff',
     },
     background: {
-      default: '#fafafa',
-      paper: '#ffffff',
+      default: darkMode ? '#121212' : '#fafafa',
+      paper: darkMode ? '#1e1e1e' : '#ffffff',
     },
     text: {
-      primary: '#2c3e50',
-      secondary: '#7f8c8d',
+      primary: darkMode ? '#ffffff' : '#2c3e50',
+      secondary: darkMode ? '#b0b0b0' : '#7f8c8d',
     },
     error: {
       main: '#e74c3c',
@@ -44,32 +55,32 @@ const coralTheme = createTheme({
     h1: {
       fontWeight: 700,
       fontSize: '2.5rem',
-      color: '#2c3e50',
+      color: darkMode ? '#ffffff' : '#2c3e50',
     },
     h2: {
       fontWeight: 600,
       fontSize: '2rem',
-      color: '#2c3e50',
+      color: darkMode ? '#ffffff' : '#2c3e50',
     },
     h3: {
       fontWeight: 600,
       fontSize: '1.75rem',
-      color: '#2c3e50',
+      color: darkMode ? '#ffffff' : '#2c3e50',
     },
     h4: {
       fontWeight: 600,
       fontSize: '1.5rem',
-      color: '#2c3e50',
+      color: darkMode ? '#ffffff' : '#2c3e50',
     },
     h5: {
       fontWeight: 600,
       fontSize: '1.25rem',
-      color: '#2c3e50',
+      color: darkMode ? '#ffffff' : '#2c3e50',
     },
     h6: {
       fontWeight: 600,
       fontSize: '1rem',
-      color: '#2c3e50',
+      color: darkMode ? '#ffffff' : '#2c3e50',
     },
     body1: {
       fontSize: '1rem',
@@ -92,10 +103,14 @@ const coralTheme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: '#ffffff',
-          color: '#2c3e50',
-          boxShadow: '0 2px 20px rgba(0, 0, 0, 0.08)',
-          borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
+          backgroundColor: darkMode ? '#1e1e1e' : '#ffffff',
+          color: darkMode ? '#ffffff' : '#2c3e50',
+          boxShadow: darkMode 
+            ? '0 2px 20px rgba(0, 0, 0, 0.3)' 
+            : '0 2px 20px rgba(0, 0, 0, 0.08)',
+          borderBottom: darkMode 
+            ? '1px solid rgba(255, 255, 255, 0.1)' 
+            : '1px solid rgba(0, 0, 0, 0.05)',
           '& .MuiToolbar-root': {
             minHeight: '72px',
             paddingLeft: '24px',
@@ -114,9 +129,13 @@ const coralTheme = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          backgroundColor: '#ffffff',
-          borderRight: '1px solid rgba(0, 0, 0, 0.05)',
-          boxShadow: '4px 0 20px rgba(0, 0, 0, 0.08)',
+          backgroundColor: darkMode ? '#1e1e1e' : '#ffffff',
+          borderRight: darkMode 
+            ? '1px solid rgba(255, 255, 255, 0.1)' 
+            : '1px solid rgba(0, 0, 0, 0.05)',
+          boxShadow: darkMode 
+            ? '4px 0 20px rgba(0, 0, 0, 0.3)' 
+            : '4px 0 20px rgba(0, 0, 0, 0.08)',
           '& .RaMenuItemLink-root': {
             borderRadius: '12px',
             margin: '4px 12px',
@@ -144,6 +163,7 @@ const coralTheme = createTheme({
           '& .MuiListItemText-primary': {
             fontSize: '0.95rem',
             fontWeight: 500,
+            color: darkMode ? '#ffffff' : 'inherit',
           },
         },
       },
@@ -187,11 +207,18 @@ const coralTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: '16px',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-          border: '1px solid rgba(0, 0, 0, 0.05)',
+          boxShadow: darkMode 
+            ? '0 4px 20px rgba(0, 0, 0, 0.3)' 
+            : '0 4px 20px rgba(0, 0, 0, 0.08)',
+          border: darkMode 
+            ? '1px solid rgba(255, 255, 255, 0.1)' 
+            : '1px solid rgba(0, 0, 0, 0.05)',
           transition: 'all 0.2s ease-in-out',
+          backgroundColor: darkMode ? '#1e1e1e' : '#ffffff',
           '&:hover': {
-            boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
+            boxShadow: darkMode 
+              ? '0 8px 30px rgba(0, 0, 0, 0.4)' 
+              : '0 8px 30px rgba(0, 0, 0, 0.12)',
             transform: 'translateY(-2px)',
           },
         },
@@ -202,17 +229,28 @@ const coralTheme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: '16px',
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-          border: '1px solid rgba(0, 0, 0, 0.05)',
+          boxShadow: darkMode 
+            ? '0 4px 20px rgba(0, 0, 0, 0.3)' 
+            : '0 4px 20px rgba(0, 0, 0, 0.08)',
+          border: darkMode 
+            ? '1px solid rgba(255, 255, 255, 0.1)' 
+            : '1px solid rgba(0, 0, 0, 0.05)',
+          backgroundColor: darkMode ? '#1e1e1e' : '#ffffff',
         },
         elevation1: {
-          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.06)',
+          boxShadow: darkMode 
+            ? '0 2px 10px rgba(0, 0, 0, 0.2)' 
+            : '0 2px 10px rgba(0, 0, 0, 0.06)',
         },
         elevation2: {
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+          boxShadow: darkMode 
+            ? '0 4px 20px rgba(0, 0, 0, 0.3)' 
+            : '0 4px 20px rgba(0, 0, 0, 0.08)',
         },
         elevation3: {
-          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.12)',
+          boxShadow: darkMode 
+            ? '0 8px 30px rgba(0, 0, 0, 0.4)' 
+            : '0 8px 30px rgba(0, 0, 0, 0.12)',
         },
       },
     },
@@ -222,7 +260,7 @@ const coralTheme = createTheme({
         root: {
           '& .MuiOutlinedInput-root': {
             borderRadius: '12px',
-            backgroundColor: '#ffffff',
+            backgroundColor: darkMode ? '#2a2a2a' : '#ffffff',
             transition: 'all 0.2s ease-in-out',
             '&:hover .MuiOutlinedInput-notchedOutline': {
               borderColor: '#F75A5A',
@@ -261,16 +299,17 @@ const coralTheme = createTheme({
         root: {
           borderRadius: '16px',
           overflow: 'hidden',
+          backgroundColor: darkMode ? '#1e1e1e' : '#ffffff',
         },
       },
     },
     MuiTableHead: {
       styleOverrides: {
         root: {
-          backgroundColor: '#fafafa',
+          backgroundColor: darkMode ? '#2a2a2a' : '#fafafa',
           '& .MuiTableCell-head': {
             fontWeight: 600,
-            color: '#2c3e50',
+            color: darkMode ? '#ffffff' : '#2c3e50',
             fontSize: '0.95rem',
             borderBottom: '2px solid rgba(247, 90, 90, 0.1)',
           },
@@ -288,6 +327,16 @@ const coralTheme = createTheme({
         },
       },
     },
+    MuiTableCell: {
+      styleOverrides: {
+        root: {
+          color: darkMode ? '#ffffff' : 'inherit',
+          borderBottom: darkMode 
+            ? '1px solid rgba(255, 255, 255, 0.1)' 
+            : '1px solid rgba(0, 0, 0, 0.12)',
+        },
+      },
+    },
     // Pagination styling
     MuiPagination: {
       styleOverrides: {
@@ -295,6 +344,7 @@ const coralTheme = createTheme({
           '& .MuiPaginationItem-root': {
             borderRadius: '8px',
             fontWeight: 500,
+            color: darkMode ? '#ffffff' : 'inherit',
             '&.Mui-selected': {
               backgroundColor: '#F75A5A',
               color: '#ffffff',
@@ -309,13 +359,46 @@ const coralTheme = createTheme({
   },
 });
 
-export const Layout = ({ children }: { children: ReactNode }) => (
-  <ThemeProvider theme={coralTheme}>
-    <CssBaseline />
+// Custom AppBar with Dark Mode Toggle
+const CustomAppBar = () => {
+  const { darkMode, toggleDarkMode } = useDarkMode();
+  
+  return (
+    <AppBar>
+      <TitlePortal />
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: '0.875rem' }}>
+          {darkMode ? 'Dark' : 'Light'} Mode
+        </Typography>
+        <IconButton
+          onClick={toggleDarkMode}
+          sx={{
+            color: 'text.primary',
+            backgroundColor: 'rgba(247, 90, 90, 0.1)',
+            '&:hover': {
+              backgroundColor: 'rgba(247, 90, 90, 0.2)',
+              transform: 'scale(1.1)',
+            },
+            transition: 'all 0.2s ease-in-out',
+          }}
+        >
+          {darkMode ? <Brightness7 /> : <Brightness4 />}
+        </IconButton>
+      </Box>
+    </AppBar>
+  );
+};
+
+// Custom Layout Component
+const CustomLayout = ({ children }: { children: ReactNode }) => {
+  const { darkMode } = useDarkMode();
+  
+  return (
     <RALayout
+      appBar={CustomAppBar}
       sx={{
         '& .RaLayout-content': {
-          backgroundColor: '#fafafa',
+          backgroundColor: darkMode ? '#121212' : '#fafafa',
           minHeight: '100vh',
         },
         '& .RaLayout-contentWithSidebar': {
@@ -326,5 +409,24 @@ export const Layout = ({ children }: { children: ReactNode }) => (
       {children}
       <CheckForApplicationUpdate />
     </RALayout>
-  </ThemeProvider>
-);
+  );
+};
+
+export const Layout = ({ children }: { children: ReactNode }) => {
+  const [darkMode, setDarkMode] = useState(false);
+  
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
+  const theme = createAppTheme(darkMode);
+
+  return (
+    <DarkModeContext.Provider value={{ darkMode, toggleDarkMode }}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <CustomLayout>{children}</CustomLayout>
+      </ThemeProvider>
+    </DarkModeContext.Provider>
+  );
+};
