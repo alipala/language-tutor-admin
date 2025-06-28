@@ -359,27 +359,11 @@ const createAppTheme = (darkMode: boolean) => createTheme({
   },
 });
 
-// Custom AppBar with Dark Mode Toggle
+// Custom AppBar without duplicate toggle (React Admin has its own)
 const CustomAppBar = () => {
-  const { darkMode, toggleDarkMode } = useDarkMode();
-  
   return (
     <AppBar>
       <TitlePortal />
-      <IconButton
-        onClick={toggleDarkMode}
-        sx={{
-          color: 'text.primary',
-          backgroundColor: 'rgba(247, 90, 90, 0.1)',
-          '&:hover': {
-            backgroundColor: 'rgba(247, 90, 90, 0.2)',
-            transform: 'scale(1.1)',
-          },
-          transition: 'all 0.2s ease-in-out',
-        }}
-      >
-        {darkMode ? <Brightness7 /> : <Brightness4 />}
-      </IconButton>
     </AppBar>
   );
 };
