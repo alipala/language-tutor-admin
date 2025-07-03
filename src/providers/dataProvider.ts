@@ -82,7 +82,37 @@ class AdminDataProvider implements DataProvider {
           }
         };
       }
-    } catch (error) {
+    } catch (error: any) {
+      // TEMPORARY WORKAROUND: If individual GET fails due to server code issues,
+      // fall back to getting the item from the list
+      if (error.response?.status === 404 && resource === 'notifications') {
+        console.warn(`[WORKAROUND] Individual GET failed for ${params.id}, falling back to list lookup`);
+        
+        try {
+          const listResponse = await this.getList(resource, {
+            pagination: { page: 1, perPage: 100 },
+            sort: { field: 'created_at', order: 'DESC' },
+            filter: {}
+          });
+          
+          const item = listResponse.data.find((item: any) => 
+            item.id === params.id || item._id === params.id
+          );
+          
+          if (item) {
+            console.warn(`[WORKAROUND] Found notification in list: ${item.title}`);
+            return { 
+              data: {
+                ...item,
+                id: item.id || item._id
+              }
+            };
+          }
+        } catch (listError) {
+          console.error('[WORKAROUND] List fallback also failed:', listError);
+        }
+      }
+      
       throw new Error(`Failed to fetch ${resource} with id ${params.id}: ${error}`);
     }
   }
