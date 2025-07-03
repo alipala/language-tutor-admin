@@ -62,8 +62,26 @@ class AdminDataProvider implements DataProvider {
     const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
     
     try {
-      const response = await httpClient.get<ApiResponse<any>>(url);
-      return { data: response.data };
+      const response = await httpClient.get<any>(url);
+      
+      // Handle both old format (direct object) and new format ({data: object})
+      if (response.data) {
+        // New format - {data: object} structure
+        return { 
+          data: {
+            ...response.data,
+            id: response.data.id || response.data._id // Ensure id field exists
+          }
+        };
+      } else {
+        // Old format - direct object response
+        return { 
+          data: {
+            ...response,
+            id: response.id || response._id // Ensure id field exists
+          }
+        };
+      }
     } catch (error) {
       throw new Error(`Failed to fetch ${resource} with id ${params.id}: ${error}`);
     }
@@ -121,8 +139,26 @@ class AdminDataProvider implements DataProvider {
     const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
     
     try {
-      const response = await httpClient.put<ApiResponse<any>>(url, params.data);
-      return { data: response.data };
+      const response = await httpClient.put<any>(url, params.data);
+      
+      // Handle both old format (direct object) and new format ({data: object})
+      if (response.data) {
+        // New format - {data: object} structure
+        return { 
+          data: {
+            ...response.data,
+            id: response.data.id || response.data._id // Ensure id field exists
+          }
+        };
+      } else {
+        // Old format - direct object response
+        return { 
+          data: {
+            ...response,
+            id: response.id || response._id // Ensure id field exists
+          }
+        };
+      }
     } catch (error) {
       throw new Error(`Failed to update ${resource}: ${error}`);
     }
