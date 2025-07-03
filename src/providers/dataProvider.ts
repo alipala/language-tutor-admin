@@ -25,12 +25,34 @@ class AdminDataProvider implements DataProvider {
     const url = `${this.baseUrl}/api/admin/${resource}?${query}`;
     
     try {
-      const response = await httpClient.get<ApiResponse<any[]>>(url);
+      const response = await httpClient.get<any>(url);
       
-      return {
-        data: response.data || [],
-        total: response.total || 0,
-      };
+      // Handle both old format (array) and new format ({data, total})
+      if (Array.isArray(response)) {
+        // Old format - direct array response
+        return {
+          data: response.map((item: any) => ({
+            ...item,
+            id: item.id || item._id // Ensure id field exists
+          })),
+          total: response.length,
+        };
+      } else if (response.data && Array.isArray(response.data)) {
+        // New format - {data, total} structure
+        return {
+          data: response.data.map((item: any) => ({
+            ...item,
+            id: item.id || item._id // Ensure id field exists
+          })),
+          total: response.total || response.data.length,
+        };
+      } else {
+        // Fallback for other formats
+        return {
+          data: [],
+          total: 0,
+        };
+      }
     } catch (error) {
       throw new Error(`Failed to fetch ${resource}: ${error}`);
     }
