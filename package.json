@@ -46,5 +46,6 @@
     "typescript-eslint": "^8.28.0",
     "vite": "^6.2.6"
   },
-  "name": "language-tutor-admin"
+  "name": "language-tutor-admin",
+  "version": "3.1.0"
 }
