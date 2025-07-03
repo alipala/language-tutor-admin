@@ -78,4 +78,5 @@ export const App = () => (
     />
   </Admin>
 );
-// Force rebuild - Notification Center deployment - Fri Jan 3 15:31:30 CET 2025
+// Force rebuild - Notification Center deployment - Fri Jan 3 15:32:52 CET 2025
+// Added notification resource with proper imports and configuration
