@@ -202,18 +202,33 @@ const UserSelector = ({ value, onChange }: any) => {
           value={sendToAll ? 'all' : 'specific'}
           onChange={(e) => {
             if (e.target.value === 'all') {
-              handleSendToAllToggle();
+              setSendToAll(true);
+              setSelectedUsers([]);
+              onChange([]);
             } else {
               setSendToAll(false);
               setOpen(true);
             }
           }}
           displayEmpty
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '& fieldset': { 
+                borderColor: theme.palette.divider
+              },
+              '&:hover fieldset': { 
+                borderColor: theme.palette.primary.main
+              },
+              '&.Mui-focused fieldset': { 
+                borderColor: theme.palette.primary.main
+              },
+            }
+          }}
         >
           <MenuItem value="all">
             <Stack direction="row" alignItems="center" spacing={1}>
-              <Group sx={{ fontSize: 20, color: theme.palette.text.secondary }} />
-              <Typography>Send to All Users</Typography>
+              <Group sx={{ fontSize: 20, color: theme.palette.primary.main }} />
+              <Typography sx={{ fontWeight: 500 }}>Send to All Users</Typography>
             </Stack>
           </MenuItem>
           <MenuItem value="specific">
@@ -461,6 +476,30 @@ const SchedulingComponent = ({ sendImmediately, onSendImmediatelyChange, schedul
               onChange={(e) => onScheduledTimeChange(e.target.value ? new Date(e.target.value) : null)}
               InputLabelProps={{
                 shrink: true,
+              }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Schedule sx={{ color: theme.palette.text.secondary, fontSize: 20 }} />
+                  </InputAdornment>
+                )
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': { 
+                    borderColor: theme.palette.divider
+                  },
+                  '&:hover fieldset': { 
+                    borderColor: theme.palette.primary.main
+                  },
+                  '&.Mui-focused fieldset': { 
+                    borderColor: theme.palette.primary.main
+                  },
+                },
+                '& .MuiInputBase-input': {
+                  fontSize: '14px',
+                  fontWeight: 500
+                }
               }}
             />
           </Box>
