@@ -124,6 +124,7 @@ const UserCard = ({ record }: { record: any }) => {
   const getSubscriptionStatusColor = (status?: string) => {
     switch (status) {
       case 'active': return '#4caf50';
+      case 'trialing': return '#9c27b0'; // Purple for trial
       case 'canceling': return '#ff9800';
       case 'canceled': return '#f44336';
       case 'past_due': return '#ff5722';
@@ -135,6 +136,7 @@ const UserCard = ({ record }: { record: any }) => {
   const getSubscriptionStatusLabel = (status?: string) => {
     switch (status) {
       case 'active': return 'Active';
+      case 'trialing': return 'Free Trial';
       case 'canceling': return 'Canceling';
       case 'canceled': return 'Canceled';
       case 'past_due': return 'Past Due';
@@ -435,6 +437,7 @@ const ModernUserRow = ({ record, selected, onSelect }: { record: any, selected: 
   const getSubscriptionStatusColor = (status?: string) => {
     switch (status) {
       case 'active': return '#4caf50';
+      case 'trialing': return '#9c27b0'; // Purple for trial
       case 'canceling': return '#ff9800';
       case 'canceled': return '#f44336';
       case 'past_due': return '#ff5722';
@@ -446,6 +449,7 @@ const ModernUserRow = ({ record, selected, onSelect }: { record: any, selected: 
   const getSubscriptionStatusLabel = (status?: string) => {
     switch (status) {
       case 'active': return 'Active';
+      case 'trialing': return 'Free Trial';
       case 'canceling': return 'Canceling';
       case 'canceled': return 'Canceled';
       case 'past_due': return 'Past Due';
@@ -864,6 +868,7 @@ const userFilters = [
     label="Subscription Status"
     choices={[
       { id: 'active', name: 'Active' },
+      { id: 'trialing', name: 'Free Trial' },
       { id: 'canceling', name: 'Canceling' },
       { id: 'canceled', name: 'Canceled' },
       { id: 'past_due', name: 'Past Due' },
