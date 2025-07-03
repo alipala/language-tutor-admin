@@ -5,7 +5,8 @@ import {
   School, 
   BarChart, 
   EmojiEvents, 
-  Assessment
+  Assessment,
+  Notifications
 } from "@mui/icons-material";
 import { Layout } from "./Layout";
 import { authProvider } from "./providers/authProvider";
@@ -17,6 +18,7 @@ import { UserStatsList } from "./resources/user-stats";
 import { BadgesList } from "./resources/badges";
 import { AssessmentHistoryList } from "./resources/assessment-history";
 import { LearningPlansList } from "./resources/learning-plans";
+import { NotificationList, NotificationCreate, NotificationShow } from "./resources/notifications";
 
 export const App = () => (
   <Admin
@@ -24,7 +26,7 @@ export const App = () => (
     authProvider={authProvider}
     dataProvider={dataProvider}
     dashboard={Dashboard}
-    title="My Taco AI Admin Panel"
+    title="My Taco AI Admin Panel - v3.1"
   >
     <Resource
       name="users"
@@ -66,6 +68,15 @@ export const App = () => (
       icon={School}
       options={{ label: "Learning Plans" }}
     />
+    <Resource
+      name="notifications"
+      list={NotificationList}
+      create={NotificationCreate}
+      show={NotificationShow}
+      icon={Notifications}
+      options={{ label: "Notification Center" }}
+    />
   </Admin>
 );
-// Force rebuild Sat Jun 28 15:06:39 CEST 2025
+// Force rebuild - Notification Center deployment - Fri Jan 3 15:32:52 CET 2025
+// Added notification resource with proper imports and configuration

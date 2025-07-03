@@ -25,12 +25,34 @@ class AdminDataProvider implements DataProvider {
     const url = `${this.baseUrl}/api/admin/${resource}?${query}`;
     
     try {
-      const response = await httpClient.get<ApiResponse<any[]>>(url);
+      const response = await httpClient.get<any>(url);
       
-      return {
-        data: response.data || [],
-        total: response.total || 0,
-      };
+      // Handle both old format (array) and new format ({data, total})
+      if (Array.isArray(response)) {
+        // Old format - direct array response
+        return {
+          data: response.map((item: any) => ({
+            ...item,
+            id: item.id || item._id // Ensure id field exists
+          })),
+          total: response.length,
+        };
+      } else if (response.data && Array.isArray(response.data)) {
+        // New format - {data, total} structure
+        return {
+          data: response.data.map((item: any) => ({
+            ...item,
+            id: item.id || item._id // Ensure id field exists
+          })),
+          total: response.total || response.data.length,
+        };
+      } else {
+        // Fallback for other formats
+        return {
+          data: [],
+          total: 0,
+        };
+      }
     } catch (error) {
       throw new Error(`Failed to fetch ${resource}: ${error}`);
     }
@@ -40,9 +62,57 @@ class AdminDataProvider implements DataProvider {
     const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
     
     try {
-      const response = await httpClient.get<ApiResponse<any>>(url);
-      return { data: response.data };
-    } catch (error) {
+      const response = await httpClient.get<any>(url);
+      
+      // Handle both old format (direct object) and new format ({data: object})
+      if (response.data) {
+        // New format - {data: object} structure
+        return { 
+          data: {
+            ...response.data,
+            id: response.data.id || response.data._id // Ensure id field exists
+          }
+        };
+      } else {
+        // Old format - direct object response
+        return { 
+          data: {
+            ...response,
+            id: response.id || response._id // Ensure id field exists
+          }
+        };
+      }
+    } catch (error: any) {
+      // TEMPORARY WORKAROUND: If individual GET fails due to server code issues,
+      // fall back to getting the item from the list
+      if (error.response?.status === 404 && resource === 'notifications') {
+        console.warn(`[WORKAROUND] Individual GET failed for ${params.id}, falling back to list lookup`);
+        
+        try {
+          const listResponse = await this.getList(resource, {
+            pagination: { page: 1, perPage: 100 },
+            sort: { field: 'created_at', order: 'DESC' },
+            filter: {}
+          });
+          
+          const item = listResponse.data.find((item: any) => 
+            item.id === params.id || item._id === params.id
+          );
+          
+          if (item) {
+            console.warn(`[WORKAROUND] Found notification in list: ${item.title}`);
+            return { 
+              data: {
+                ...item,
+                id: item.id || item._id
+              }
+            };
+          }
+        } catch (listError) {
+          console.error('[WORKAROUND] List fallback also failed:', listError);
+        }
+      }
+      
       throw new Error(`Failed to fetch ${resource} with id ${params.id}: ${error}`);
     }
   }
@@ -99,8 +169,26 @@ class AdminDataProvider implements DataProvider {
     const url = `${this.baseUrl}/api/admin/${resource}/${params.id}`;
     
     try {
-      const response = await httpClient.put<ApiResponse<any>>(url, params.data);
-      return { data: response.data };
+      const response = await httpClient.put<any>(url, params.data);
+      
+      // Handle both old format (direct object) and new format ({data: object})
+      if (response.data) {
+        // New format - {data: object} structure
+        return { 
+          data: {
+            ...response.data,
+            id: response.data.id || response.data._id // Ensure id field exists
+          }
+        };
+      } else {
+        // Old format - direct object response
+        return { 
+          data: {
+            ...response,
+            id: response.id || response._id // Ensure id field exists
+          }
+        };
+      }
     } catch (error) {
       throw new Error(`Failed to update ${resource}: ${error}`);
     }
