@@ -8,6 +8,9 @@ healthcheckTimeout = 100
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
 
+[variables]
+PORT = "8080"
+
 [environments.production]
 projectId = "86a57e58-9092-4f47-be03-43d372a6a15a"
 serviceId = "language-tutor-admin"
