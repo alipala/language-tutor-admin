@@ -5,7 +5,8 @@ import {
   School, 
   BarChart, 
   EmojiEvents, 
-  Assessment
+  Assessment,
+  Notifications
 } from "@mui/icons-material";
 import { Layout } from "./Layout";
 import { authProvider } from "./providers/authProvider";
@@ -17,6 +18,7 @@ import { UserStatsList } from "./resources/user-stats";
 import { BadgesList } from "./resources/badges";
 import { AssessmentHistoryList } from "./resources/assessment-history";
 import { LearningPlansList } from "./resources/learning-plans";
+import { NotificationList, NotificationCreate, NotificationShow } from "./resources/notifications";
 
 export const App = () => (
   <Admin
@@ -65,6 +67,14 @@ export const App = () => (
       list={LearningPlansList}
       icon={School}
       options={{ label: "Learning Plans" }}
+    />
+    <Resource
+      name="notifications"
+      list={NotificationList}
+      create={NotificationCreate}
+      show={NotificationShow}
+      icon={Notifications}
+      options={{ label: "Notification Center" }}
     />
   </Admin>
 );
